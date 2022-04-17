@@ -1,0 +1,37 @@
+version: '3.7'
+
+volumes:
+  postgres:
+  pgadmin:
+
+services:
+  postgres:
+    container_name: bfa-postgres
+    image: 'postgres:12'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ball-for-all
+      PGDATA: '/data/postgres'
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - '5432:5432'
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: bfa-pgadmin
+    image: 'dpage/pgadmin4:4.24'
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - '5433:80'
+    entrypoint:
+      - '/bin/sh'
+      - '-c'
+      - "/bin/echo 'postgres:5432:*:postgres:password' > /tmp/pgpassfile && chmod 600 /tmp/pgpassfile && /entrypoint.sh"
+    restart: unless-stopped
