@@ -11,9 +11,11 @@ const Player = sequelize.define(
       primaryKey: true,
       allowNull: false,
     },
-    fullName: {
+    firstName: {
       type: DataTypes.STRING,
-      allowNull: false,
+    },
+    lastName: {
+      type: DataTypes.STRING,
     },
     about: {
       type: DataTypes.STRING,

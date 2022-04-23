@@ -2,6 +2,7 @@ import Player from '../models/player.model'
 import { playerRegisterSchema, playerUpdateSchema } from '../validators/player.validation'
 import { Request, Response } from 'express'
 import User from './../models/user.model'
+import trimObjectValues from '../helpers/trimObjectValues'
 
 const getAllPlayers = async (req: Request, res: Response) => {
   try {
@@ -26,15 +27,16 @@ const getPlayerById = async (req: Request, res: Response) => {
 }
 
 const registerPlayer = async (req: Request, res: Response) => {
-  const validationResult = playerRegisterSchema.validate({ ...req.body })
+  const payload = trimObjectValues(req.body)
+  const validationResult = playerRegisterSchema.validate({ ...payload })
 
   if (validationResult.error) {
     const errorMsg = validationResult.error.details[0].message
-    return res.status(400).send({ error: errorMsg })
+    return res.status(400).send(errorMsg)
   }
 
   try {
-    const { email, password, birthDate, role, profilePic, ...rest } = req.body
+    let { email, password, birthDate, role, profilePic, ...rest } = payload
     const generals = { email, password, birthDate, role, profilePic }
 
     const user: any = await User.create({ ...generals })
@@ -53,7 +55,7 @@ const updatePlayer = async (req: Request, res: Response) => {
 
   if (validationResult.error) {
     const errorMsg = validationResult.error.details
-    return res.status(400).json({ error: errorMsg })
+    return res.status(400).send(errorMsg)
   }
 
   try {

@@ -2,7 +2,8 @@ import Joi from 'joi'
 import { registerSchema, updateSchema } from './user.validation'
 
 export const playerRegisterSchema = registerSchema.keys({
-  fullName: Joi.string().required().min(2).max(70).label('Fullname'),
+  firstName: Joi.string().required().min(2).max(50).label('Firstname'),
+  lastName: Joi.string().required().min(2).max(50).label('Lastname'),
   gender: Joi.string().label('Gender').valid('Male', 'Female'),
   city: Joi.string().min(2).max(50).label('City'),
   zipCode: Joi.string().min(2).max(30).label('Zip Code'),
@@ -18,7 +19,8 @@ export const playerRegisterSchema = registerSchema.keys({
 
 export const playerUpdateSchema = updateSchema.keys({
   userId: Joi.string().required().label('Player ID'),
-  fullName: Joi.string().min(2).max(70).label('Fullname'),
+  firstName: Joi.string().required().min(2).max(50).label('Firstname'),
+  lastName: Joi.string().required().min(2).max(50).label('Lastname'),
   gender: Joi.string().label('Gender').valid('Male', 'Female'),
   city: Joi.string().min(2).max(50).label('City'),
   zipCode: Joi.string().min(2).max(30).label('Zip Code'),
