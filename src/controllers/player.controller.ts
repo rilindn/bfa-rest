@@ -1,10 +1,11 @@
 import Player from '../models/player.model'
-import { registerSchema, updateSchema } from '../validators/user.validation'
+import { playerRegisterSchema, playerUpdateSchema } from '../validators/player.validation'
 import { Request, Response } from 'express'
+import User from './../models/user.model'
 
 const getAllPlayers = async (req: Request, res: Response) => {
   try {
-    const result = await Player.findAll()
+    const result = await User.findAll({ include: Player })
     return res.send(result)
   } catch (error) {
     return res.status(500).send(error)
@@ -15,8 +16,9 @@ const getPlayerById = async (req: Request, res: Response) => {
   const id = req.params.id
   try {
     if (!id) return
-    const result = await Player.findByPk(id)
-    if (!result) return res.status(404)
+
+    const result = await User.findByPk(id, { include: Player })
+    if (!result) return res.status(404).send('Player not found')
     return res.send(result)
   } catch (error) {
     return res.status(500).send(error)
@@ -24,7 +26,7 @@ const getPlayerById = async (req: Request, res: Response) => {
 }
 
 const registerPlayer = async (req: Request, res: Response) => {
-  const validationResult = registerSchema.validate({ ...req.body })
+  const validationResult = playerRegisterSchema.validate({ ...req.body })
 
   if (validationResult.error) {
     const errorMsg = validationResult.error.details[0].message
@@ -32,7 +34,13 @@ const registerPlayer = async (req: Request, res: Response) => {
   }
 
   try {
-    const result = await Player.create({ ...req.body })
+    const { email, password, birthDate, role, profilePic, ...rest } = req.body
+    const generals = { email, password, birthDate, role, profilePic }
+
+    const user: any = await User.create({ ...generals })
+    await Player.create({ ...rest, UserId: user.id })
+
+    const result = await User.findByPk(user.id, { include: Player })
     return res.send(result)
   } catch (error) {
     return res.status(500).send(error)
@@ -41,7 +49,7 @@ const registerPlayer = async (req: Request, res: Response) => {
 
 const updatePlayer = async (req: Request, res: Response) => {
   const userId = req.params.id
-  const validationResult = updateSchema.validate({ ...req.body, userId })
+  const validationResult = playerUpdateSchema.validate({ ...req.body, userId })
 
   if (validationResult.error) {
     const errorMsg = validationResult.error.details
@@ -49,9 +57,15 @@ const updatePlayer = async (req: Request, res: Response) => {
   }
 
   try {
-    const updatedPlayer = await Player.update({ ...req.body }, { where: { id: userId } })
-    if (!updatedPlayer) return res.status(404).send('Player not found!')
-    const result = await Player.findByPk(userId)
+    const { email, password, birthDate, role, profilePic, ...rest } = req.body
+    const generals = { email, password, birthDate, role, profilePic }
+
+    const user: any = await User.update({ ...generals }, { where: { id: userId } })
+    const player = await Player.update({ ...rest }, { where: { UserId: userId } })
+
+    if (!user || !player) return res.status(404).send('Player not found!')
+    const result = await User.findByPk(userId, { include: Player })
+
     return res.send(result)
   } catch (error) {
     res.status(500).send(error)
@@ -60,9 +74,9 @@ const updatePlayer = async (req: Request, res: Response) => {
 
 const deletePlayer = async (req: Request, res: Response) => {
   try {
-    const result = await Player.findByPk(req.params.id)
+    const result = await User.findByPk(req.params.id, { include: Player })
     if (!result) {
-      return res.status(404)
+      return res.status(404).send('Player not found')
     } else {
       await result.destroy()
       return res.send(result)

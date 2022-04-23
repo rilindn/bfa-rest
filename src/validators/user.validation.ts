@@ -5,6 +5,7 @@ export const registerSchema = Joi.object({
   password: Joi.string().min(7).max(30).required().label('Password'),
   birthDate: Joi.string().label('Birthdate'),
   role: Joi.string().required().valid('Player', 'Club').label('Role'),
+  status: Joi.string().label('Status').valid('Active', 'Inactive'),
   profilePic: Joi.string().min(2).label('Profile picture'),
 })
 
@@ -14,5 +15,6 @@ export const updateSchema = Joi.object({
   password: Joi.string().min(7).max(30).required().label('Password'),
   birthDate: Joi.string().label('Birthdate'),
   role: Joi.string().required().valid('Player', 'Club').label('Role'),
+  status: Joi.string().label('Status').valid('Active', 'Inactive'),
   profilePic: Joi.string().min(2).label('Profile picture'),
 })

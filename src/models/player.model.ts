@@ -27,9 +27,6 @@ const Player = sequelize.define(
     zipCode: {
       type: DataTypes.STRING,
     },
-    status: {
-      type: DataTypes.BOOLEAN,
-    },
     placeOfBirth: {
       type: DataTypes.STRING,
     },
@@ -60,13 +57,13 @@ const Player = sequelize.define(
     indexes: [
       {
         unique: true,
-        fields: ['playerId'],
+        fields: ['playerId', 'UserId'],
       },
     ],
   },
 )
 
-User.hasOne(Player)
+User.hasOne(Player, { onDelete: 'CASCADE' })
 Player.belongsTo(User)
 
 export default Player
