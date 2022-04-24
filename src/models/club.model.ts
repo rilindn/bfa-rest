@@ -11,6 +11,12 @@ const Club = sequelize.define(
       primaryKey: true,
       allowNull: false,
     },
+    firstName: {
+      type: DataTypes.STRING,
+    },
+    lastName: {
+      type: DataTypes.STRING,
+    },
     clubName: {
       type: DataTypes.STRING,
     },
@@ -22,6 +28,7 @@ const Club = sequelize.define(
     },
     isVerified: {
       type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
   },
   {
