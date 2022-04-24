@@ -1,10 +1,20 @@
 import Joi from 'joi'
 
 export const registerSchema = Joi.object({
-  name: Joi.string().min(2).max(30).required().label('Name'),
+  email: Joi.string().email().required().label('Email'),
+  password: Joi.string().min(7).max(30).required().label('Password'),
+  birthDate: Joi.string().label('Birthdate'),
+  role: Joi.string().required().valid('Player', 'Club').label('Role'),
+  status: Joi.string().label('Status').valid('Active', 'Inactive'),
+  profilePic: Joi.string().min(2).label('Profile picture'),
 })
 
 export const updateSchema = Joi.object({
   userId: Joi.string().required().label('ID'),
-  name: Joi.string().min(2).max(30).label('Name'),
+  email: Joi.string().email().required().label('Email'),
+  password: Joi.string().min(7).max(30).required().label('Password'),
+  birthDate: Joi.string().label('Birthdate'),
+  role: Joi.string().required().valid('Player', 'Club').label('Role'),
+  status: Joi.string().label('Status').valid('Active', 'Inactive'),
+  profilePic: Joi.string().min(2).label('Profile picture'),
 })

@@ -10,12 +10,38 @@ const User = sequelize.define(
       primaryKey: true,
       allowNull: false,
     },
-    name: {
+    email: {
       type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    birthDate: {
+      type: DataTypes.STRING,
+    },
+    role: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    profilePic: {
+      type: DataTypes.STRING,
+    },
+    status: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
     },
   },
   {
     tableName: 'Users',
+    indexes: [
+      {
+        unique: true,
+        fields: ['id', 'email'],
+      },
+    ],
   },
 )
 
