@@ -31,7 +31,7 @@ const registerClub = async (req: Request, res: Response) => {
 
   if (validationResult.error) {
     const errorMsg = validationResult.error.details[0].message
-    return res.status(400).send({ error: errorMsg })
+    return res.status(400).send(errorMsg)
   }
 
   try {
