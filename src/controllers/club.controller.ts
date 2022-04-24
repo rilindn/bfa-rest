@@ -54,7 +54,7 @@ const updateClub = async (req: Request, res: Response) => {
 
   if (validationResult.error) {
     const errorMsg = validationResult.error.details
-    return res.status(400).json({ error: errorMsg })
+    return res.status(400).send(errorMsg)
   }
 
   try {
