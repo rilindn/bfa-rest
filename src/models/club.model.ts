@@ -34,7 +34,7 @@ const Club = sequelize.define(
     ],
   },
 )
-User.hasOne(Club)
+User.hasOne(Club, { onDelete: 'CASCADE' })
 Club.belongsTo(User)
 
 export default Club

@@ -1,10 +1,12 @@
 import Club from '../models/club.model'
-import { registerSchema, updateSchema } from '../validators/club.validation'
+import { clubRegisterSchema, clubUpdateSchema } from '../validators/club.validation'
 import { Request, Response } from 'express'
+import User from '../models/user.model'
+import trimObjectValues from '../helpers/trimObjectValues'
 
 const getAllClubs = async (req: Request, res: Response) => {
   try {
-    const result = await Club.findAll()
+    const result = await User.findAll({ include: Club })
     return res.send(result)
   } catch (error) {
     return res.status(500).send(error)
@@ -15,8 +17,8 @@ const getClubById = async (req: Request, res: Response) => {
   const id = req.params.id
   try {
     if (!id) return
-    const result = await Club.findByPk(id)
-    if (!result) return res.status(404)
+    const result = await User.findByPk(id, { include: Club })
+    if (!result) return res.status(404).send('Club not found!')
     return res.send(result)
   } catch (error) {
     return res.status(500).send(error)
@@ -24,8 +26,8 @@ const getClubById = async (req: Request, res: Response) => {
 }
 
 const registerClub = async (req: Request, res: Response) => {
-  console.log('first')
-  const validationResult = registerSchema.validate({ ...req.body })
+  const payload = trimObjectValues(req.body)
+  const validationResult = clubRegisterSchema.validate({ ...payload })
 
   if (validationResult.error) {
     const errorMsg = validationResult.error.details[0].message
@@ -33,7 +35,13 @@ const registerClub = async (req: Request, res: Response) => {
   }
 
   try {
-    const result = await Club.create({ ...req.body })
+    let { email, password, birthDate, role, profilePic, ...rest } = payload
+    const generals = { email, password, birthDate, role, profilePic }
+
+    const user: any = await User.create({ ...generals })
+    await Club.create({ ...rest, UserId: user.id })
+
+    const result = await User.findByPk(user.id, { include: Club })
     return res.send(result)
   } catch (error) {
     return res.status(500).send(error)
@@ -41,8 +49,8 @@ const registerClub = async (req: Request, res: Response) => {
 }
 
 const updateClub = async (req: Request, res: Response) => {
-  const clubId = req.params.id
-  const validationResult = updateSchema.validate({ ...req.body, clubId })
+  const userId = req.params.id
+  const validationResult = clubUpdateSchema.validate({ ...req.body, userId })
 
   if (validationResult.error) {
     const errorMsg = validationResult.error.details
@@ -50,9 +58,15 @@ const updateClub = async (req: Request, res: Response) => {
   }
 
   try {
-    const updatedClub = await Club.update({ ...req.body }, { where: { id: clubId } })
-    if (!updatedClub) return res.status(404).send('User not found!')
-    const result = await Club.findByPk(clubId)
+    const { email, password, birthDate, role, profilePic, ...rest } = req.body
+    const generals = { email, password, birthDate, role, profilePic }
+
+    const user: any = await User.update({ ...generals }, { where: { id: userId } })
+    const player = await Club.update({ ...rest }, { where: { UserId: userId } })
+
+    if (!user || !player) return res.status(404).send('Player not found!')
+    const result = await User.findByPk(userId, { include: Club })
+
     return res.send(result)
   } catch (error) {
     res.status(500).send(error)
@@ -61,9 +75,9 @@ const updateClub = async (req: Request, res: Response) => {
 
 const deleteClub = async (req: Request, res: Response) => {
   try {
-    const result = await Club.findByPk(req.params.id)
+    const result = await User.findByPk(req.params.id, { include: Club })
     if (!result) {
-      return res.status(404)
+      return res.status(404).send('Club not found')
     } else {
       await result.destroy()
       return res.send(result)
@@ -72,5 +86,4 @@ const deleteClub = async (req: Request, res: Response) => {
     return res.status(500).send(error)
   }
 }
-
 export default { getAllClubs, getClubById, registerClub, updateClub, deleteClub }
