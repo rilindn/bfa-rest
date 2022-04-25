@@ -1,5 +1,5 @@
 import express from 'express'
-import ClubController from '../controllers/club.controller'
+import ClubController from '../../controllers/club.controller'
 
 const router = express.Router()
 
