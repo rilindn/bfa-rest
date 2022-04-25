@@ -43,6 +43,9 @@ const User = sequelize.define(
         fields: ['id', 'email'],
       },
     ],
+    defaultScope: {
+      attributes: { exclude: ['password'] },
+    },
   },
 )
 User.beforeCreate(async (user: any, options) => {

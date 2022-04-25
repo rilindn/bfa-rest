@@ -7,8 +7,6 @@ router.get('/', ClubController.getAllClubs)
 
 router.get('/:id', ClubController.getClubById)
 
-router.post('/', ClubController.registerClub)
-
 router.put('/:id', ClubController.updateClub)
 
 router.delete('/:id', ClubController.deleteClub)

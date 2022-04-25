@@ -4,6 +4,8 @@ import bcrypt from 'bcrypt'
 import passportJwt from 'passport-jwt'
 import User from '../models/user.model'
 import dotenv from 'dotenv'
+import Player from '../models/player.model'
+import Club from '../models/club.model'
 
 dotenv.config()
 
@@ -19,7 +21,13 @@ const authFields = {
 
 passport.use(
   new LocalStrategy(authFields, async (email: String, password: string | Buffer, done: any) => {
-    const user: any = await User.findOne({ where: { email } })
+    const user: any = await User.findOne({
+      where: { email },
+      include: [{ model: Player }, { model: Club }],
+      attributes: {
+        include: ['password'],
+      },
+    })
     if (!user) {
       return done(null, false)
     } else if (!(await bcrypt.compare(password, user.password))) {
