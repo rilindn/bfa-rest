@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize'
 import { sequelize } from '../conf/postgres.config'
+import bcrypt from 'bcrypt'
 
 const User = sequelize.define(
   'User',
@@ -42,7 +43,14 @@ const User = sequelize.define(
         fields: ['id', 'email'],
       },
     ],
+    defaultScope: {
+      attributes: { exclude: ['password'] },
+    },
   },
 )
+User.beforeCreate(async (user: any, options) => {
+  const hashedPassword = await bcrypt.hash(user.password, 10)
+  user.password = hashedPassword
+})
 
 export default User
