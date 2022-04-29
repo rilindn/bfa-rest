@@ -62,7 +62,7 @@ const updatePlayer = async (req: Request, res: Response) => {
     const { email, password, birthDate, role, profilePic, ...rest } = req.body
     const generals = { email, password, birthDate, role, profilePic }
 
-    const user: any = await User.update({ ...generals }, { where: { id: userId } })
+    const user: any = await User.update({ ...generals }, { where: { id: userId }, individualHooks: true })
     const player = await Player.update({ ...rest }, { where: { UserId: userId } })
 
     if (!user || !player) return res.status(404).send('Player not found!')

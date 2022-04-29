@@ -19,8 +19,8 @@ export const playerRegisterSchema = registerSchema.keys({
 
 export const playerUpdateSchema = updateSchema.keys({
   userId: Joi.string().required().label('Player ID'),
-  firstName: Joi.string().required().min(2).max(50).label('Firstname'),
-  lastName: Joi.string().required().min(2).max(50).label('Lastname'),
+  firstName: Joi.string().min(2).max(50).label('Firstname'),
+  lastName: Joi.string().min(2).max(50).label('Lastname'),
   gender: Joi.string().label('Gender').valid('Male', 'Female'),
   city: Joi.string().min(2).max(50).label('City'),
   zipCode: Joi.string().min(2).max(30).label('Zip Code'),
