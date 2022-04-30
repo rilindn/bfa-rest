@@ -10,7 +10,7 @@ const deleteResetCodes = async (email: String) => {
         { email },
         {
           createdAt: {
-            [Op.lt]: new Date(Date.now() - 60 * 60 * 1000),
+            [Op.lt]: new Date(Date.now() - 10 * 60 * 1000),
           },
         },
       ],

@@ -18,4 +18,6 @@ authRoute.post('/requestResetPassword', userController.requestResetPassword)
 
 authRoute.post('/validateResetPasswordCode', userController.validateResetPasswordCode)
 
+authRoute.put('/resetPassword/:userId', userController.resetPassword)
+
 export default authRoute

@@ -9,6 +9,7 @@ import Player from '../models/player.model'
 import Club from '../models/club.model'
 import Sequelize from 'sequelize'
 import deleteResetCodes from '../helpers/deleteExpiredResetCodes'
+import trimObjectValues from '../helpers/trimObjectValues'
 
 const Op = Sequelize.Op
 
@@ -50,7 +51,7 @@ const registerUser = async (req: Request, res: Response) => {
 }
 
 const requestResetPassword = async (req: Request, res: Response) => {
-  const email = req.body.email
+  const { email } = trimObjectValues(req.body)
   try {
     const user: any = await User.findOne({ where: { email }, include: [{ model: Player }, { model: Club }] })
     if (!user) return res.status(404).send('User not found')
@@ -74,7 +75,7 @@ const requestResetPassword = async (req: Request, res: Response) => {
 }
 
 const validateResetPasswordCode = async (req: Request, res: Response) => {
-  const { email, code } = req.body
+  const { email, code } = trimObjectValues(req.body)
   try {
     const user: any = await User.findOne({ where: { email }, include: [{ model: Player }, { model: Club }] })
     if (!user) return res.status(404).send('User not found')
@@ -83,11 +84,40 @@ const validateResetPasswordCode = async (req: Request, res: Response) => {
     if (!resetCode) return res.status(404).send('Invalid or expired password reset code!')
     if (!(await bcrypt.compare(code, resetCode.code))) return res.status(404).send('Invalid or expired password reset code!')
 
-    // delete old or expired reset codes
-    await deleteResetCodes(email)
-    return res.send('You can continue setting your new password!')
+    return res.send(resetCode)
   } catch (error) {
     return res.status(500).send(error)
+  }
+}
+
+const resetPassword = async (req: Request, res: Response) => {
+  const userId = req.params.userId
+  const { email, code, password } = trimObjectValues(req.body)
+
+  const user: any = await User.findOne({ where: { email }, include: [{ model: Player }, { model: Club }] })
+  if (!user) return res.status(404).send('User not found')
+
+  const resetCode: any = await ResetCode.findOne({ where: { email } })
+  if (!resetCode) return res.status(404).send('Invalid or expired password reset code!')
+  if (code !== resetCode.code) return res.status(404).send('Invalid or expired password reset code!')
+
+  const validationResult = updateSchema.validate({ password, userId })
+
+  if (validationResult.error) {
+    const errorMsg = validationResult.error.details
+    return res.status(400).json({ error: errorMsg })
+  }
+
+  try {
+    const updatedUser = await User.update({ ...req.body }, { where: { id: userId }, individualHooks: true })
+    if (!updatedUser) return res.status(404).send('User not found!')
+
+    // delete old or expired reset codes
+    await deleteResetCodes(email)
+    const result = await User.findByPk(userId)
+    return res.send(result)
+  } catch (error) {
+    res.status(500).send(error)
   }
 }
 
@@ -101,7 +131,7 @@ const updateUser = async (req: Request, res: Response) => {
   }
 
   try {
-    const updatedUser = await User.update({ ...req.body }, { where: { id: userId } })
+    const updatedUser = await User.update({ ...req.body }, { where: { id: userId }, individualHooks: true })
     if (!updatedUser) return res.status(404).send('User not found!')
     const result = await User.findByPk(userId)
     return res.send(result)
@@ -124,4 +154,4 @@ const deleteUser = async (req: Request, res: Response) => {
   }
 }
 
-export default { getAllUsers, getUserById, registerUser, updateUser, deleteUser, requestResetPassword, validateResetPasswordCode }
+export default { getAllUsers, getUserById, registerUser, updateUser, deleteUser, requestResetPassword, validateResetPasswordCode, resetPassword }
