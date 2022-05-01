@@ -30,6 +30,12 @@ const Club = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    league: {
+      type: DataTypes.INTEGER,
+    },
+    leagueLevel: {
+      type: DataTypes.INTEGER,
+    },
   },
   {
     tableName: 'Clubs',
