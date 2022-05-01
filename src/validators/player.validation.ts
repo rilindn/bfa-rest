@@ -15,6 +15,7 @@ export const playerRegisterSchema = registerSchema.keys({
   foot: Joi.string().label('Foot').valid('Left', 'Right', 'Both'),
   position: Joi.string().min(2).max(50).label('Position'),
   secondPosition: Joi.string().min(2).max(50).label('Second position'),
+  backNumber: Joi.number().label('Back number'),
 })
 
 export const playerUpdateSchema = updateSchema.keys({
@@ -28,8 +29,10 @@ export const playerUpdateSchema = updateSchema.keys({
   nationality: Joi.string().min(2).max(50).label('Nationality'),
   openForTransfer: Joi.bool().label('Open for transfer'),
   weight: Joi.number().min(30).max(150).label('Weight'),
+  about: Joi.string().min(30).max(550).label('About'),
   height: Joi.number().min(50).max(250).label('Height'),
   foot: Joi.string().label('Foot').valid('Left', 'Right', 'Both'),
   position: Joi.string().min(2).max(50).label('Position'),
   secondPosition: Joi.string().min(2).max(50).label('Second position'),
+  backNumber: Joi.number().label('Back number'),
 })
