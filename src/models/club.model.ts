@@ -31,10 +31,10 @@ const Club = sequelize.define(
       defaultValue: false,
     },
     league: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
     },
     leagueLevel: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
     },
   },
   {
