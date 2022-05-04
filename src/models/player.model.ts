@@ -53,6 +53,9 @@ const Player = sequelize.define(
     secondPosition: {
       type: DataTypes.STRING,
     },
+    backNumber: {
+      type: DataTypes.INTEGER,
+    },
   },
   {
     tableName: 'Players',

@@ -8,6 +8,8 @@ export const clubRegisterSchema = registerSchema.keys({
   city: Joi.string().min(2).max(30).label('City'),
   isVerified: Joi.boolean().label('Is Verified'),
   clubLogo: Joi.string().label('Club Logo'),
+  league: Joi.string().label('League'),
+  leagueLevel: Joi.string().label('League level'),
 })
 
 export const clubUpdateSchema = updateSchema.keys({
@@ -18,4 +20,6 @@ export const clubUpdateSchema = updateSchema.keys({
   city: Joi.string().min(2).max(30).label('City'),
   isVerified: Joi.boolean().label('Is Verified'),
   clubLogo: Joi.string().label('Club Logo'),
+  league: Joi.string().label('League'),
+  leagueLevel: Joi.string().label('League level'),
 })
