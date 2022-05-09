@@ -10,6 +10,10 @@ export const clubRegisterSchema = registerSchema.keys({
   clubLogo: Joi.string().label('Club Logo'),
   league: Joi.string().label('League'),
   leagueLevel: Joi.string().label('League level'),
+  zipCode: Joi.string().min(5).max(5).label('Zip Code'),
+  country: Joi.string().min(2).max(50).label('Country'),
+  stadiumName: Joi.string().min(5).max(50).label('Stadium name'),
+  about: Joi.string().min(30).max(550).label('About'),
 })
 
 export const clubUpdateSchema = updateSchema.keys({
@@ -22,4 +26,8 @@ export const clubUpdateSchema = updateSchema.keys({
   clubLogo: Joi.string().label('Club Logo'),
   league: Joi.string().label('League'),
   leagueLevel: Joi.string().label('League level'),
+  zipCode: Joi.string().min(5).max(5).label('Zip Code'),
+  country: Joi.string().min(2).max(50).label('Country'),
+  stadiumName: Joi.string().min(5).max(50).label('Stadium name'),
+  about: Joi.string().min(30).max(550).label('About'),
 })
