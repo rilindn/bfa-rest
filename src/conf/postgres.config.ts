@@ -14,7 +14,7 @@ export const sequelize = new Sequelize(DB_NAME!, DB_USERNAME!, DB_PASSWORD, {
   dialect: 'postgres',
   logging: false,
 })
-
+console.log('@@envs', DB_NAME, DB_USERNAME, DB_PASSWORD, HOST)
 export const sequelizeConnection = async () => {
   try {
     sequelize
