@@ -62,9 +62,9 @@ const updateClub = async (req: Request, res: Response) => {
     const generals = { email, password, birthDate, role, profilePic }
 
     const user: any = await User.update({ ...generals }, { where: { id: userId }, individualHooks: true })
-    const player = await Club.update({ ...rest }, { where: { UserId: userId } })
+    const club = await Club.update({ ...rest }, { where: { UserId: userId } })
 
-    if (!user || !player) return res.status(404).send('Player not found!')
+    if (!user || !club) return res.status(404).send('Club not found!')
     const result = await User.findByPk(userId, { include: Club })
 
     return res.send(result)

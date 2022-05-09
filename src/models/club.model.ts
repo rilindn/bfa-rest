@@ -26,6 +26,18 @@ const Club = sequelize.define(
     city: {
       type: DataTypes.STRING,
     },
+    country: {
+      type: DataTypes.STRING,
+    },
+    stadiumName: {
+      type: DataTypes.STRING,
+    },
+    zipCode: {
+      type: DataTypes.STRING,
+    },
+    about: {
+      type: DataTypes.STRING,
+    },
     isVerified: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
