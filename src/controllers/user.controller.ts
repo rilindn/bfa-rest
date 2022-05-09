@@ -26,7 +26,7 @@ const getUserById = async (req: Request, res: Response) => {
   const id = req.params.id
   try {
     if (!id) return
-    const result = await User.findByPk(id)
+    const result = await User.findByPk(id, { include: [{ model: Player }, { model: Club }] })
     if (!result) return res.status(404)
     return res.send(result)
   } catch (error) {
