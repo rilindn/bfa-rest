@@ -7,7 +7,7 @@ import passport from 'passport'
 import session from 'express-session'
 import cookieParser from 'cookie-parser'
 import './conf/passport.config'
-import secureRouter from '../src/routes/secureRoutes'
+import secureRouter from './routes/secureRoutes'
 
 require('dotenv').config()
 
