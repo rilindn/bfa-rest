@@ -7,7 +7,9 @@ router.get('/', PostController.getAllPosts)
 
 router.get('/:id', PostController.getPostById)
 
-router.post('/', PostController.registerPost)
+router.get('/user/:id', PostController.getPostsByUserId)
+
+router.post('/', PostController.createPost)
 
 router.put('/:id', PostController.updatePost)
 

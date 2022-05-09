@@ -24,7 +24,20 @@ const getPostById = async (req: Request, res: Response) => {
   }
 }
 
-const registerPost = async (req: Request, res: Response) => {
+const getPostsByUserId = async (req: Request, res: Response) => {
+  const id = req.params.id
+  try {
+    if (!id) return
+
+    const result = await Post.findAll({ where: { UserId: id }, order: [['updatedAt', 'DESC']] })
+    if (!result) return res.status(404).send('No post found!')
+    return res.send(result)
+  } catch (error) {
+    return res.status(500).send(error)
+  }
+}
+
+const createPost = async (req: Request, res: Response) => {
   const validationResult = registerSchema.validate({ ...req.body })
 
   if (validationResult.error) {
@@ -73,4 +86,4 @@ const deletePost = async (req: Request, res: Response) => {
   }
 }
 
-export default { getAllPosts, getPostById, registerPost, updatePost, deletePost }
+export default { getAllPosts, getPostById, getPostsByUserId, createPost, updatePost, deletePost }
