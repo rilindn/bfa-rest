@@ -34,6 +34,30 @@ const getUserById = async (req: Request, res: Response) => {
   }
 }
 
+const getFilteredUsers = async (req: any, res: any) => {
+  try {
+    const query = req.query.q
+    const limit = req.query.limit || 10
+    const search = query ? `%${query.toLowerCase()}%` : ''
+    const items: any = await User.findAll({
+      limit,
+      where: {
+        [Op.or]: [
+          { '$Player.firstName$': Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('Player.firstName')), 'LIKE', '%' + search + '%') },
+          { '$Player.lastName$': Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('Player.lastName')), 'LIKE', '%' + search + '%') },
+          { '$Club.clubName$': Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('Club.clubName')), 'LIKE', '%' + search + '%') },
+          { email: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('email')), 'LIKE', '%' + search + '%') },
+        ],
+      },
+      include: [{ model: Player }, { model: Club }],
+    })
+
+    return res.status(200).send(items)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 const registerUser = async (req: Request, res: Response) => {
   const validationResult = registerSchema.validate({ ...req.body })
 
@@ -154,4 +178,14 @@ const deleteUser = async (req: Request, res: Response) => {
   }
 }
 
-export default { getAllUsers, getUserById, registerUser, updateUser, deleteUser, requestResetPassword, validateResetPasswordCode, resetPassword }
+export default {
+  getAllUsers,
+  getUserById,
+  getFilteredUsers,
+  registerUser,
+  updateUser,
+  deleteUser,
+  requestResetPassword,
+  validateResetPasswordCode,
+  resetPassword,
+}

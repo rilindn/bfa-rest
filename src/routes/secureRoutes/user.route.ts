@@ -6,6 +6,8 @@ const router = express.Router()
 // GET - users
 router.get('/', UserController.getAllUsers)
 
+router.get('/search', UserController.getFilteredUsers)
+
 // GET - users/:id
 router.get('/:id', UserController.getUserById)
 
