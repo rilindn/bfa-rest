@@ -4,7 +4,7 @@ import Post from './../models/post.model'
 
 const getAllPosts = async (req: Request, res: Response) => {
   try {
-    const result = await Post.findAll()
+    const result = await Post.findAll({ order: [['updatedAt', 'DESC']] })
     return res.send(result)
   } catch (error) {
     return res.status(500).send(error)
