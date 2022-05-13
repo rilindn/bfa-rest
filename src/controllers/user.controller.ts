@@ -36,9 +36,9 @@ const getUserById = async (req: Request, res: Response) => {
 
 const getFilteredUsers = async (req: any, res: any) => {
   try {
-    const query = req.query.q
-    const limit = req.query.limit || 10
-    const search = query ? `%${query.toLowerCase()}%` : ''
+    const { q, limit = 10, exclude = '' } = req.query
+    const search = q ? `%${q.toLowerCase()}%` : ''
+    const excludeIds = exclude ? exclude.split(',') : []
     const items: any = await User.findAll({
       limit,
       where: {
@@ -48,6 +48,7 @@ const getFilteredUsers = async (req: any, res: any) => {
           { '$Club.clubName$': Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('Club.clubName')), 'LIKE', '%' + search + '%') },
           { email: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('email')), 'LIKE', '%' + search + '%') },
         ],
+        [Op.and]: [{ id: { [Op.notIn]: excludeIds } }],
       },
       include: [{ model: Player }, { model: Club }],
     })
