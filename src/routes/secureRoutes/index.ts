@@ -6,6 +6,7 @@ import playerRouter from './player.route'
 import userRouter from './user.route'
 import clubRoutes from './club.route'
 import postRoutes from './post.route'
+import followRoutes from './follow.route'
 
 const router = express.Router()
 
@@ -16,5 +17,6 @@ router.use('/player', playerRouter)
 router.use('/user', userRouter)
 router.use('/club', clubRoutes)
 router.use('/post', postRoutes)
+router.use('/follow', followRoutes)
 
 export default router
