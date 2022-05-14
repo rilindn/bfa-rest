@@ -5,6 +5,8 @@ const router = express.Router()
 
 router.get('/', PostController.getAllPosts)
 
+router.get('/followings/:id', PostController.getMyFollowingsPosts)
+
 router.get('/:id', PostController.getPostById)
 
 router.get('/user/:id', PostController.getPostsByUserId)
