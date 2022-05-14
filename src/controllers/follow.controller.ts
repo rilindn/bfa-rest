@@ -63,8 +63,6 @@ const getMyFollowings = async (req: Request, res: Response) => {
 
 const checkFollow = async (req: Request, res: Response) => {
   const { followerId, followedId } = req.body
-  console.log('followerId', followerId)
-  console.log('followedId', followedId)
   try {
     const follow = await Follow.findOne({
       where: {

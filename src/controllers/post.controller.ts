@@ -1,6 +1,10 @@
 import { registerSchema, updateSchema } from '../validators/post.validation'
 import { Request, Response } from 'express'
 import Post from './../models/post.model'
+import Follow from './../models/follow.model'
+import Sequelize from 'sequelize'
+
+const Op = Sequelize.Op
 
 const getAllPosts = async (req: Request, res: Response) => {
   try {
@@ -21,6 +25,36 @@ const getPostById = async (req: Request, res: Response) => {
     return res.send(result)
   } catch (error) {
     return res.status(500).send(error)
+  }
+}
+
+const getMyFollowingsPosts = async (req: any, res: any) => {
+  try {
+    const id = req.params.id
+    const limit = req.query.limit
+    const followings: any = await Follow.findAll({
+      raw: true,
+      where: {
+        followerId: id,
+      },
+    })
+    if (!followings) return res.status(404).send('No posts found')
+    const followingsIds: any = followings.map((follow: any) => {
+      return follow.followedId
+    })
+
+    const posts: any = await Post.findAll({
+      limit,
+      where: {
+        UserId: {
+          [Op.in]: followingsIds,
+        },
+      },
+    })
+
+    return res.status(200).send(posts)
+  } catch (error) {
+    console.log(error)
   }
 }
 
@@ -86,4 +120,4 @@ const deletePost = async (req: Request, res: Response) => {
   }
 }
 
-export default { getAllPosts, getPostById, getPostsByUserId, createPost, updatePost, deletePost }
+export default { getAllPosts, getPostById, getPostsByUserId, createPost, updatePost, deletePost, getMyFollowingsPosts }
