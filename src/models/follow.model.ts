@@ -8,21 +8,8 @@ const Follow = sequelize.define(
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
       allowNull: false,
-    },
-    followerId: {
-      type: DataTypes.UUID,
-      references: {
-        model: User,
-        key: 'id',
-      },
-    },
-    followedId: {
-      type: DataTypes.UUID,
-      references: {
-        model: User,
-        key: 'id',
-      },
     },
   },
   {
@@ -34,7 +21,7 @@ const Follow = sequelize.define(
     ],
   },
 )
-User.belongsToMany(User, { through: Follow, as: 'Follower', onDelete: 'CASCADE' })
-User.belongsToMany(User, { through: Follow, as: 'Followed', onDelete: 'CASCADE' })
+User.belongsToMany(User, { through: Follow, as: 'Follower', onDelete: 'CASCADE', foreignKey: 'followerId' })
+User.belongsToMany(User, { through: Follow, as: 'Followed', onDelete: 'CASCADE', foreignKey: 'followedId' })
 
 export default Follow

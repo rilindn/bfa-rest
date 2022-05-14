@@ -8,16 +8,16 @@ import Club from '../models/club.model'
 const getMyFollowers = async (req: Request, res: Response) => {
   const id = req.params.id
   try {
-    const follows = await Follow.findAll({
+    const followers = await Follow.findAll({
       raw: true,
       where: {
         followedId: id,
       },
     })
 
-    if (!follows) return res.send(follows)
+    if (!followers) return res.status(404).send('No followers found!')
     const users = await Promise.all(
-      follows.map(async (follow: any) => {
+      followers.map(async (follow: any) => {
         const user = await User.findOne({
           where: {
             id: follow?.followerId,
@@ -43,7 +43,7 @@ const getMyFollowings = async (req: Request, res: Response) => {
       },
     })
 
-    if (!followings) return res.send(followings)
+    if (!followings) return res.status(404).send('No followings found!')
     const users = await Promise.all(
       followings.map(async (follow: any) => {
         const user = await User.findOne({
@@ -56,6 +56,23 @@ const getMyFollowings = async (req: Request, res: Response) => {
       }),
     )
     return res.send(users)
+  } catch (error) {
+    return res.status(500).send(error)
+  }
+}
+
+const checkFollow = async (req: Request, res: Response) => {
+  const { followerId, followedId } = req.body
+  console.log('followerId', followerId)
+  console.log('followedId', followedId)
+  try {
+    const follow = await Follow.findOne({
+      where: {
+        followerId,
+        followedId,
+      },
+    })
+    return res.send(!!follow)
   } catch (error) {
     return res.status(500).send(error)
   }
@@ -76,4 +93,24 @@ const createFollow = async (req: Request, res: Response) => {
   }
 }
 
-export default { getMyFollowers, getMyFollowings, createFollow }
+const unFollow = async (req: Request, res: Response) => {
+  const { followerId, followedId } = req.body
+  try {
+    const follow = await Follow.findOne({
+      where: {
+        followerId,
+        followedId,
+      },
+    })
+    if (!follow) {
+      return res.status(404)
+    } else {
+      await follow.destroy()
+      return res.send(follow)
+    }
+  } catch (error) {
+    return res.status(500).send(error)
+  }
+}
+
+export default { getMyFollowers, getMyFollowings, checkFollow, createFollow, unFollow }
