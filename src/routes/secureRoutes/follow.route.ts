@@ -7,10 +7,10 @@ router.get('/followers/:id', FollowController.getMyFollowers)
 
 router.get('/followings/:id', FollowController.getMyFollowings)
 
-router.get('/checkFollow', FollowController.checkFollow)
+router.get('/checkFollow/:followerId/:followedId', FollowController.checkFollow)
 
 router.post('/', FollowController.createFollow)
 
-router.delete('/', FollowController.unFollow)
+router.delete('/:followerId/:followedId', FollowController.unFollow)
 
 export default router
