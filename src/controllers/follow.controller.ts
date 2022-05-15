@@ -62,7 +62,7 @@ const getMyFollowings = async (req: Request, res: Response) => {
 }
 
 const checkFollow = async (req: Request, res: Response) => {
-  const { followerId, followedId } = req.body
+  const { followerId, followedId } = req.params
   try {
     const follow = await Follow.findOne({
       where: {
@@ -92,7 +92,7 @@ const createFollow = async (req: Request, res: Response) => {
 }
 
 const unFollow = async (req: Request, res: Response) => {
-  const { followerId, followedId } = req.body
+  const { followerId, followedId } = req.params
   try {
     const follow = await Follow.findOne({
       where: {
