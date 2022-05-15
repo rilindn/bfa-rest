@@ -4,9 +4,14 @@ import Follow from './../models/follow.model'
 import User from '../models/user.model'
 import Player from '../models/player.model'
 import Club from '../models/club.model'
+import Sequelize from 'sequelize'
+
+const Op = Sequelize.Op
 
 const getMyFollowers = async (req: Request, res: Response) => {
   const id = req.params.id
+  const query: any = req.query.q || ''
+  const search = query?.toLowerCase()
   try {
     const followers = await Follow.findAll({
       raw: true,
@@ -20,6 +25,11 @@ const getMyFollowers = async (req: Request, res: Response) => {
       followers.map(async (follow: any) => {
         const user = await User.findOne({
           where: {
+            [Op.or]: [
+              { '$Player.firstName$': Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('Player.firstName')), 'LIKE', '%' + search + '%') },
+              { '$Player.lastName$': Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('Player.lastName')), 'LIKE', '%' + search + '%') },
+              { '$Club.clubName$': Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('Club.clubName')), 'LIKE', '%' + search + '%') },
+            ],
             id: follow?.followerId,
           },
           include: [{ model: Player }, { model: Club }],
@@ -27,7 +37,7 @@ const getMyFollowers = async (req: Request, res: Response) => {
         return user
       }),
     )
-    return res.send(users)
+    return res.send(users.filter(Boolean))
   } catch (error) {
     return res.status(500).send(error)
   }
@@ -35,6 +45,8 @@ const getMyFollowers = async (req: Request, res: Response) => {
 
 const getMyFollowings = async (req: Request, res: Response) => {
   const id = req.params.id
+  const query: any = req.query.q || ''
+  const search = query?.toLowerCase()
   try {
     const followings = await Follow.findAll({
       raw: true,
@@ -48,6 +60,11 @@ const getMyFollowings = async (req: Request, res: Response) => {
       followings.map(async (follow: any) => {
         const user = await User.findOne({
           where: {
+            [Op.or]: [
+              { '$Player.firstName$': Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('Player.firstName')), 'LIKE', '%' + search + '%') },
+              { '$Player.lastName$': Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('Player.lastName')), 'LIKE', '%' + search + '%') },
+              { '$Club.clubName$': Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('Club.clubName')), 'LIKE', '%' + search + '%') },
+            ],
             id: follow?.followedId,
           },
           include: [{ model: Player }, { model: Club }],
@@ -55,7 +72,7 @@ const getMyFollowings = async (req: Request, res: Response) => {
         return user
       }),
     )
-    return res.send(users)
+    return res.send(users.filter(Boolean))
   } catch (error) {
     return res.status(500).send(error)
   }
@@ -101,7 +118,7 @@ const unFollow = async (req: Request, res: Response) => {
       },
     })
     if (!follow) {
-      return res.status(404)
+      return res.status(404).send('Not found')
     } else {
       await follow.destroy()
       return res.send(follow)
