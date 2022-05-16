@@ -78,6 +78,29 @@ const getMyFollowings = async (req: Request, res: Response) => {
   }
 }
 
+const getFollowSuggestions = async (req: Request, res: Response) => {
+  const id = req.params.id
+  try {
+    const followers: any = await Follow.findAll({
+      raw: true,
+      where: {
+        followedId: id,
+      },
+    })
+    const excludeIds = followers?.map(({ followerId }: any) => followerId) || []
+
+    const users: any = await User.findAll({
+      where: {
+        id: { [Op.notIn]: excludeIds },
+      },
+      include: [{ model: Player }, { model: Club }],
+    })
+    return res.send(users)
+  } catch (error) {
+    return res.status(500).send(error)
+  }
+}
+
 const checkFollow = async (req: Request, res: Response) => {
   const { followerId, followedId } = req.params
   try {
@@ -128,4 +151,4 @@ const unFollow = async (req: Request, res: Response) => {
   }
 }
 
-export default { getMyFollowers, getMyFollowings, checkFollow, createFollow, unFollow }
+export default { getMyFollowers, getMyFollowings, getFollowSuggestions, checkFollow, createFollow, unFollow }
