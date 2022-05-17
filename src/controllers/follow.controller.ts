@@ -92,6 +92,7 @@ const getFollowSuggestions = async (req: Request, res: Response) => {
     const users: any = await User.findAll({
       where: {
         id: { [Op.notIn]: excludeIds },
+        role: 'Player',
       },
       include: [{ model: Player }, { model: Club }],
     })
