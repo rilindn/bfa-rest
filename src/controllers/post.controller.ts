@@ -89,6 +89,7 @@ const createPost = async (req: Request, res: Response) => {
 
 const updatePost = async (req: Request, res: Response) => {
   const postId = req.params.id
+  console.log('first', req.body)
   const validationResult = updateSchema.validate({ ...req.body, postId })
 
   if (validationResult.error) {
@@ -109,12 +110,10 @@ const updatePost = async (req: Request, res: Response) => {
 const deletePost = async (req: Request, res: Response) => {
   try {
     const result = await Post.findByPk(req.params.id)
-    if (!result) {
-      return res.status(404).send('Player not found')
-    } else {
-      await result.destroy()
-      return res.send(result)
-    }
+    if (!result) return res.status(404).send('Player not found')
+
+    await result.destroy()
+    return res.send(result)
   } catch (error) {
     return res.status(500).send(error)
   }
