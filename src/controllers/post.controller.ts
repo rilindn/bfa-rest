@@ -31,7 +31,7 @@ const getPostById = async (req: Request, res: Response) => {
 const getMyFollowingsPosts = async (req: any, res: any) => {
   try {
     const id = req.params.id
-    const limit = req.query.limit
+    const limit = req.query.limit || 50
     const followings: any = await Follow.findAll({
       raw: true,
       where: {
