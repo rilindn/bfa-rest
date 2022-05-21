@@ -81,13 +81,13 @@ const getMyFollowings = async (req: Request, res: Response) => {
 const getFollowSuggestions = async (req: Request, res: Response) => {
   const id = req.params.id
   try {
-    const followers: any = await Follow.findAll({
+    const following: any = await Follow.findAll({
       raw: true,
       where: {
-        followedId: id,
+        followerId: id,
       },
     })
-    const excludeIds = followers?.map(({ followerId }: any) => followerId) || []
+    const excludeIds = following?.map(({ followedId }: any) => followedId) || []
 
     const users: any = await User.findAll({
       where: {
