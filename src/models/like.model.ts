@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize'
 import { sequelize } from '../conf/postgres.config'
+import Post from './post.model'
 import User from './user.model'
 
 const Like = sequelize.define(
@@ -11,17 +12,26 @@ const Like = sequelize.define(
       primaryKey: true,
       allowNull: false,
     },
+    postId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
+    userId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
   },
   {
     tableName: 'Likes',
     indexes: [
       {
-        fields: ['id'],
+        fields: ['id', 'postId', 'userId'],
       },
     ],
   },
 )
 
+Post.hasMany(Like)
 User.hasMany(Like)
 Like.belongsTo(User, { onDelete: 'CASCADE' })
 
