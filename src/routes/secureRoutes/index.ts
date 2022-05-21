@@ -7,6 +7,7 @@ import userRouter from './user.route'
 import clubRoutes from './club.route'
 import postRoutes from './post.route'
 import followRoutes from './follow.route'
+import likeRoutes from './like.route'
 
 const router = express.Router()
 
@@ -18,5 +19,6 @@ router.use('/user', userRouter)
 router.use('/club', clubRoutes)
 router.use('/post', postRoutes)
 router.use('/follow', followRoutes)
+router.use('/like', likeRoutes)
 
 export default router
