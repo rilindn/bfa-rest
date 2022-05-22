@@ -45,6 +45,7 @@ const getMyFollowingsPosts = async (req: any, res: any) => {
 
     const posts: any = await Post.findAll({
       limit,
+      order: [['updatedAt', 'DESC']],
       where: {
         UserId: {
           [Op.in]: followingsIds,
@@ -89,7 +90,6 @@ const createPost = async (req: Request, res: Response) => {
 
 const updatePost = async (req: Request, res: Response) => {
   const postId = req.params.id
-  console.log('first', req.body)
   const validationResult = updateSchema.validate({ ...req.body, postId })
 
   if (validationResult.error) {

@@ -95,7 +95,7 @@ const getFollowSuggestions = async (req: Request, res: Response) => {
       order: sequelize.random(),
       limit,
       where: {
-        id: { [Op.notIn]: excludeIds },
+        id: { [Op.notIn]: [...excludeIds, id] },
         role: 'Player',
       },
       include: [{ model: Player }, { model: Club }],
