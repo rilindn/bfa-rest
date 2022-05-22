@@ -5,6 +5,7 @@ import User from '../models/user.model'
 import Player from '../models/player.model'
 import Club from '../models/club.model'
 import Sequelize from 'sequelize'
+import { sequelize } from '../conf/postgres.config'
 
 const Op = Sequelize.Op
 
@@ -80,6 +81,7 @@ const getMyFollowings = async (req: Request, res: Response) => {
 
 const getFollowSuggestions = async (req: Request, res: Response) => {
   const id = req.params.id
+  const limit = +req.query.limit! || 50
   try {
     const following: any = await Follow.findAll({
       raw: true,
@@ -90,6 +92,8 @@ const getFollowSuggestions = async (req: Request, res: Response) => {
     const excludeIds = following?.map(({ followedId }: any) => followedId) || []
 
     const users: any = await User.findAll({
+      order: sequelize.random(),
+      limit,
       where: {
         id: { [Op.notIn]: excludeIds },
         role: 'Player',
