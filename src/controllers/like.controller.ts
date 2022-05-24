@@ -1,26 +1,12 @@
 import { registerSchema } from '../validators/like.validation'
 import { Request, Response } from 'express'
 import Like from './../models/like.model'
-import Sequelize from 'sequelize'
 
-const Op = Sequelize.Op
-
-const getAllLikes = async (req: Request, res: Response) => {
-  try {
-    const result = await Like.findAll()
-    return res.send(result)
-  } catch (error) {
-    return res.status(500).send(error)
-  }
-}
-
-const getLikeById = async (req: Request, res: Response) => {
+const getPostLikes = async (req: Request, res: Response) => {
   const id = req.params.id
   try {
     if (!id) return
-
-    const result = await Like.findByPk(req.params.id)
-    if (!result) return res.status(404).send('Like not found')
+    const result = await Like.findAll({ where: { PostId: id } })
     return res.send(result)
   } catch (error) {
     return res.status(500).send(error)
@@ -56,4 +42,4 @@ const removeLike = async (req: Request, res: Response) => {
   }
 }
 
-export default { getAllLikes, getLikeById, createLike, removeLike }
+export default { getPostLikes, createLike, removeLike }
