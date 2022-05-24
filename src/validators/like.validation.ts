@@ -1,5 +1,6 @@
-import Joi from "joi";
+import Joi from 'joi'
 
 export const registerSchema = Joi.object({
-    likeId: Joi.string().required().label('Like Id'),
+  UserId: Joi.string().required().label('User Id'),
+  PostId: Joi.string().required().label('Post Id'),
 })
