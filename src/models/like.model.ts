@@ -12,26 +12,19 @@ const Like = sequelize.define(
       primaryKey: true,
       allowNull: false,
     },
-    postId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-    },
-    userId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-    },
   },
   {
     tableName: 'Likes',
     indexes: [
       {
-        fields: ['id', 'postId', 'userId'],
+        fields: ['id', 'PostId', 'UserId'],
       },
     ],
   },
 )
 
 Post.hasMany(Like)
+Like.belongsTo(Post, { onDelete: 'CASCADE' })
 User.hasMany(Like)
 Like.belongsTo(User, { onDelete: 'CASCADE' })
 

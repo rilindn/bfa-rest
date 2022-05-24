@@ -3,9 +3,7 @@ import LikeController from '../../controllers/like.controller'
 
 const router = express.Router()
 
-router.get('/', LikeController.getAllLikes)
-
-router.get('/:id', LikeController.getLikeById)
+router.get('/:id', LikeController.getPostLikes)
 
 router.post('/', LikeController.createLike)
 
