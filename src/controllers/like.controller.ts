@@ -13,33 +13,51 @@ const getPostLikes = async (req: Request, res: Response) => {
   }
 }
 
-const createLike = async (req: Request, res: Response) => {
-  const validationResult = registerSchema.validate({ ...req.body })
-
-  if (validationResult.error) {
-    const errorMsg = validationResult.error.details[0].message
-    return res.status(400).send(errorMsg)
-  }
+const checkIfLiked = async (req: Request, res: Response) => {
+  const { PostId, UserId } = req.body
   try {
-    const result = await Like.create({ ...req.body })
+    if (!PostId || !UserId) return
+    const result = await Like.findOne({ where: { PostId, UserId } })
     return res.send(result)
   } catch (error) {
     return res.status(500).send(error)
   }
 }
 
-const removeLike = async (req: Request, res: Response) => {
+const likePost = async (req: Request, res: Response) => {
+  const { PostId, UserId } = req.body
+  const validationResult = registerSchema.validate({ PostId, UserId })
+
+  if (validationResult.error) {
+    const errorMsg = validationResult.error.details[0].message
+    return res.status(400).send(errorMsg)
+  }
   try {
-    const result = await Like.findByPk(req.params.id)
-    if (!result) {
-      return res.status(404).send('Like not found')
-    } else {
-      await result.destroy()
-      return res.send(result)
+    const existingLike = await Like.findOne({ where: { PostId, UserId } })
+    if (!existingLike) {
+      await Like.create({ PostId, UserId, raw: true })
     }
+    const postLikes = await Like.findAll({ where: { PostId } })
+    return res.send(postLikes)
   } catch (error) {
     return res.status(500).send(error)
   }
 }
 
-export default { getPostLikes, createLike, removeLike }
+const unlikePost = async (req: Request, res: Response) => {
+  const { PostId, UserId } = req.body
+  try {
+    if (!PostId || !UserId) return
+
+    const result = await Like.findOne({ where: { PostId, UserId } })
+    if (!result) return res.status(404).send('Not found')
+
+    await result.destroy()
+    const postLikes = await Like.findAll({ where: { PostId } })
+    return res.send(postLikes)
+  } catch (error) {
+    return res.status(500).send(error)
+  }
+}
+
+export default { getPostLikes, checkIfLiked, likePost, unlikePost }

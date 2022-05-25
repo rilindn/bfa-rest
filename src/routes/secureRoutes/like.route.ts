@@ -5,8 +5,10 @@ const router = express.Router()
 
 router.get('/:id', LikeController.getPostLikes)
 
-router.post('/', LikeController.createLike)
+router.post('/', LikeController.likePost)
 
-router.delete('/:id', LikeController.removeLike)
+router.post('/check', LikeController.checkIfLiked)
+
+router.post('/unlike', LikeController.unlikePost)
 
 export default router
