@@ -1,12 +1,15 @@
 import { registerSchema } from '../validators/like.validation'
 import { Request, Response } from 'express'
 import Like from './../models/like.model'
+import Player from '../models/player.model'
+import Club from '../models/club.model'
+import User from '../models/user.model'
 
 const getPostLikes = async (req: Request, res: Response) => {
   const id = req.params.id
   try {
     if (!id) return
-    const result = await Like.findAll({ where: { PostId: id } })
+    const result = await Like.findAll({ where: { PostId: id }, include: [{ model: User, include: [{ model: Player }, { model: Club }] }] })
     return res.send(result)
   } catch (error) {
     return res.status(500).send(error)
