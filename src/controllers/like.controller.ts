@@ -40,7 +40,7 @@ const likePost = async (req: Request, res: Response) => {
     if (!existingLike) {
       await Like.create({ PostId, UserId, raw: true })
     }
-    const postLikes = await Like.findAll({ where: { PostId } })
+    const postLikes = await Like.findAll({ where: { PostId }, include: [{ model: User, include: [{ model: Player }, { model: Club }] }] })
     return res.send(postLikes)
   } catch (error) {
     return res.status(500).send(error)
@@ -56,7 +56,7 @@ const unlikePost = async (req: Request, res: Response) => {
     if (!result) return res.status(404).send('Not found')
 
     await result.destroy()
-    const postLikes = await Like.findAll({ where: { PostId } })
+    const postLikes = await Like.findAll({ where: { PostId }, include: [{ model: User, include: [{ model: Player }, { model: Club }] }] })
     return res.send(postLikes)
   } catch (error) {
     return res.status(500).send(error)
