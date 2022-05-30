@@ -8,6 +8,7 @@ import session from 'express-session'
 import cookieParser from 'cookie-parser'
 import './conf/passport.config'
 import secureRouter from './routes/secureRoutes'
+import mongoConnection from './conf/mongodb.config'
 
 require('dotenv').config()
 
@@ -16,6 +17,8 @@ const app = express()
 
 // connect to postgres
 sequelizeConnection()
+// connect to mongo
+mongoConnection()
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
