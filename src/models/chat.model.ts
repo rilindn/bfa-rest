@@ -1,20 +1,29 @@
 import mongoose from 'mongoose'
 
-var ChatSchema = new mongoose.Schema(
+const MessageSchema = new mongoose.Schema(
   {
-    firstUser: { type: String },
-    secondUser: { type: String },
-    messages: [
-      {
-        sender: { type: String },
-        receiver: { type: String },
-        content: { type: String },
-      },
-    ],
+    sender: { type: String },
+    receiver: { type: String },
+    content: { type: String },
+    read: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
-    collection: 'messages',
+  },
+)
+
+const ChatSchema = new mongoose.Schema(
+  {
+    firstUser: { type: String },
+    secondUser: { type: String },
+    messages: [MessageSchema],
+  },
+  {
+    timestamps: true,
+    collection: 'chats',
   },
 )
 
