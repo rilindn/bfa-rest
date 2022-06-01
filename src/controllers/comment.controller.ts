@@ -1,12 +1,15 @@
 import { registerSchema, updateSchema } from '../validators/comment.validation'
 import { Request, Response } from 'express'
 import Comment from './../models/comment.model'
+import User from '../models/user.model'
+import Player from '../models/player.model'
+import Club from '../models/club.model'
 
 const getPostComments = async (req: Request, res: Response) => {
   const id = req.params.id
   try {
     if (!id) return
-    const result = await Comment.findAll({ where: { PostId: id } })
+    const result = await Comment.findAll({ where: { PostId: id }, include: [{ model: User, include: [{ model: Player }, { model: Club }] }] })
     return res.send(result)
   } catch (error) {
     return res.status(500).send(error)
