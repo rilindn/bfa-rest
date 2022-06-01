@@ -49,6 +49,13 @@ const createChat = async (req: Request, res: Response) => {
     return res.status(400).send(errorMsg)
   }
   try {
+    const existingChat = await Chat.findOne({
+      firstUser: { $in: [req.body.firstUser, req.body.secondUser] },
+      secondUser: { $in: [req.body.secondUser, req.body.firstUser] },
+    })
+
+    if (existingChat) return res.send('Chat exists')
+
     const newChat = new Chat({ ...req.body })
     await newChat.save()
     return res.send(newChat)
