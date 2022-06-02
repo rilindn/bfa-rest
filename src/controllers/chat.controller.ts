@@ -41,6 +41,26 @@ const getMyChats = async (req: Request, res: Response) => {
   }
 }
 
+const getChatById = async (req: Request, res: Response) => {
+  const id = req.params.id
+  try {
+    const chat = await Chat.findById(id)
+
+    if (!chat) return res.status(404).send('Chat not found!')
+
+    const otherUserId = chat?.firstUser !== id ? chat?.firstUser : chat?.secondUser
+    const user = await User.findOne({
+      where: {
+        id: otherUserId,
+      },
+      include: [{ model: Player }, { model: Club }],
+    })
+    return res.send({ chat, user })
+  } catch (error) {
+    return res.status(500).send(error)
+  }
+}
+
 const createChat = async (req: Request, res: Response) => {
   const validationResult = newChatSchema.validate({ ...req.body })
 
@@ -87,6 +107,29 @@ const newMessage = async (req: Request, res: Response) => {
   }
 }
 
+const deleteMessage = async (req: Request, res: Response) => {
+  const id = req.params.id
+  const messageId = req.params.messageId
+
+  if (!id && !messageId) {
+    return res.sendStatus(400)
+  }
+
+  try {
+    const chat = await Chat.findById(id)
+    if (!chat) return res.status(404).send('Chat not found!')
+
+    chat.messages = chat.messages.filter((item: any) => {
+      return !item._id.equals(messageId)
+    })
+    await chat.save()
+
+    res.status(200).send(chat)
+  } catch (error) {
+    return res.status(500).send(error)
+  }
+}
+
 const deleteChat = async (req: Request, res: Response) => {
   const id = req.params.id
   try {
@@ -98,4 +141,4 @@ const deleteChat = async (req: Request, res: Response) => {
   }
 }
 
-export default { getMyChats, createChat, newMessage, deleteChat }
+export default { getMyChats, getChatById, deleteMessage, createChat, newMessage, deleteChat }
