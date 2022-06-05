@@ -9,6 +9,7 @@ import cookieParser from 'cookie-parser'
 import './conf/passport.config'
 import secureRouter from './routes/secureRoutes'
 import mongoConnection from './conf/mongodb.config'
+import { socketsService } from './services/sockets'
 
 require('dotenv').config()
 
@@ -40,9 +41,12 @@ app.use(passport.session())
 app.use('/', loginRouter)
 app.use('/', passport.authenticate('jwt', { session: false }), secureRouter)
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server is running in port ${PORT}`)
 })
+
+const io = require('socket.io')(server)
+io.on('connection', socketsService)
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error(err.message)
