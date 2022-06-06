@@ -42,13 +42,13 @@ const getMyChats = async (req: Request, res: Response) => {
 }
 
 const getChatById = async (req: Request, res: Response) => {
-  const id = req.params.id
+  const { chatId, userId } = req.params
   try {
-    const chat = await Chat.findById(id)
+    const chat = await Chat.findById(chatId)
 
     if (!chat) return res.status(404).send('Chat not found!')
 
-    const otherUserId = chat?.firstUser !== id ? chat?.firstUser : chat?.secondUser
+    const otherUserId = chat?.firstUser !== userId ? chat?.firstUser : chat?.secondUser
     const user = await User.findOne({
       where: {
         id: otherUserId,
