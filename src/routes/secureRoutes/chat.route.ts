@@ -5,7 +5,7 @@ const router = express.Router()
 
 router.get('/:id', ChatController.getMyChats)
 
-router.get('/byId/:id', ChatController.getChatById)
+router.get('/:chatId/:userId', ChatController.getChatById)
 
 router.post('/:id', ChatController.newMessage)
 
