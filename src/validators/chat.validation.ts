@@ -8,5 +8,6 @@ export const newChatSchema = Joi.object({
 export const newMessageSchema = Joi.object({
   sender: Joi.string().required().label('Sender ID'),
   receiver: Joi.string().required().label('Receiver ID'),
-  content: Joi.string().required().label('Content'),
-})
+  content: Joi.string().label('Content'),
+  media: Joi.string().label('Media'),
+}).or('content', 'media')

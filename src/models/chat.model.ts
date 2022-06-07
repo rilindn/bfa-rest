@@ -5,6 +5,7 @@ const MessageSchema = new mongoose.Schema(
     sender: { type: String },
     receiver: { type: String },
     content: { type: String },
+    media: { type: String },
     read: {
       type: Boolean,
       default: false,
