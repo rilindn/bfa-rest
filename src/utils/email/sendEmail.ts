@@ -1,16 +1,11 @@
-import nodemailer from 'nodemailer'
 import hbs from 'nodemailer-express-handlebars'
+import createTransporter from './mailTransporter'
 require('dotenv').config()
 
 const sendEmail = async (res: any, user: any, code: String) => {
   const subject = 'Reset password'
-  const transporter = nodemailer.createTransport({
-    service: process.env.EMAIL_SERVICE,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  })
+  const transporter = await createTransporter()
+
   const options = {
     viewEngine: {
       extname: '.hbs',
