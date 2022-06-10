@@ -12,6 +12,7 @@ const jwt = jsonwebtoken
 
 const login = async (req: any, res: any, next: any) => {
   req.body = trimObjectValues(req.body)
+  const { adminOnly } = req.query
   passport.authenticate('local', async (err: any, user: any) => {
     try {
       if (err || !user) {
@@ -19,6 +20,10 @@ const login = async (req: any, res: any, next: any) => {
       }
       req.login(user, { session: false }, async (error: any) => {
         if (error) return next(error)
+        if (adminOnly && user.role !== 'Admin') {
+          const permisionErr = new Error("You don't have permisions")
+          return next(permisionErr)
+        }
         const body = { userID: user?.id }
         const token = jwt.sign({ user: body }, process.env.ACCESS_TOKEN_SECRET || '')
         const { password, ...data } = user.dataValues // don't send password field in response
