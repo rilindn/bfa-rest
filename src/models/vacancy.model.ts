@@ -31,17 +31,17 @@ const Vacancy = sequelize.define(
     },
   },
   {
-    tableName: 'Vacancy',
+    tableName: 'Vacancies',
     indexes: [
       {
         unique: true,
-        fields: ['id'],
+        fields: ['id', 'ClubId'],
       },
     ],
   },
 )
 
-Club.hasMany(Vacancy)
-Vacancy.belongsTo(Club, { onDelete: 'CASCADE' })
+Club.hasMany(Vacancy, { foreignKey: 'ClubId' })
+Vacancy.belongsTo(Club, { onDelete: 'CASCADE', foreignKey: 'ClubId' })
 
 export default Vacancy
