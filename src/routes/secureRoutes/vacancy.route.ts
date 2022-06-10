@@ -5,7 +5,7 @@ const router = express.Router()
 
 router.get('/club/:id', VacancyController.getVacancyByClubsId)
 
-router.get('/followings/:id', VacancyController.getMyFollowingsVacancy)
+router.get('/followings/:id', VacancyController.getMyFollowingsVacancies)
 
 router.get('/:id', VacancyController.getVacancyById)
 

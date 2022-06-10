@@ -14,9 +14,8 @@ const getVacancyByClubsId = async (req: Request, res: Response) => {
     if (!id) return
 
     const result = await Vacancy.findAll({
-      where: { UserId: id },
-      include: [{ model: User, include: [{ model: Club }] }],
-      order: [['updatedAt', 'DESC']],
+      where: { ClubId: id },
+      include: [{ model: Club, include: [{ model: User }] }],
     })
     if (!result) return res.status(404).send('No vacancies found!')
     return res.send(result)
@@ -25,10 +24,9 @@ const getVacancyByClubsId = async (req: Request, res: Response) => {
   }
 }
 
-const getMyFollowingsVacancy = async (req: any, res: any) => {
+const getMyFollowingsVacancies = async (req: any, res: any) => {
   try {
     const id = req.params.id
-    const limit = req.query.limit || 50
     const followings: any = await Follow.findAll({
       raw: true,
       where: {
@@ -36,13 +34,16 @@ const getMyFollowingsVacancy = async (req: any, res: any) => {
       },
     })
     if (!followings) return res.status(404).send('No vacancies found')
-    const followingsIds: any = followings.map((follow: any) => {
-      return follow.followedId
-    })
+    const followingsIds: any = await Promise.all(
+      followings.map(async (follow: any) => {
+        const club: any = await Club.findOne({ where: { UserId: follow.followedId } })
+        if (club?.clubId) return club.clubId
+      }),
+    )
 
     const vacancies: any = await Vacancy.findAll({
-      limit,
       order: [['updatedAt', 'DESC']],
+      include: [{ model: Club, include: [{ model: User }] }],
       where: {
         ClubId: {
           [Op.in]: followingsIds,
@@ -116,4 +117,4 @@ const deleteVacancy = async (req: Request, res: Response) => {
   }
 }
 
-export default { createVacancy, getVacancyById, editVacancy, deleteVacancy, getMyFollowingsVacancy, getVacancyByClubsId }
+export default { createVacancy, getVacancyById, editVacancy, deleteVacancy, getMyFollowingsVacancies, getVacancyByClubsId }
