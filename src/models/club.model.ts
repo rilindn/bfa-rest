@@ -54,7 +54,7 @@ const Club = sequelize.define(
     indexes: [
       {
         unique: true,
-        fields: ['clubId'],
+        fields: ['clubId', 'UserId'],
       },
     ],
   },
