@@ -48,6 +48,10 @@ const server = app.listen(PORT, () => {
 const io = require('socket.io')(server)
 io.on('connection', socketsService)
 
+process.on('unhandledRejection', (reason, p) => {
+  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
+})
+
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error(err.message)
   if (!err.statusCode) err.statusCode = 500
