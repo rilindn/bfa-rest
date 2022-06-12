@@ -5,6 +5,7 @@ import Sequelize from 'sequelize'
 import Follow from '../models/follow.model'
 import Club from '../models/club.model'
 import User from '../models/user.model'
+import VacancyApplication from './../models/vacancyApplication.model'
 
 const Op = Sequelize.Op
 
@@ -14,8 +15,9 @@ const getVacancyByClubsId = async (req: Request, res: Response) => {
     if (!id) return
 
     const result = await Vacancy.findAll({
+      order: [['createdAt', 'DESC']],
       where: { ClubId: id },
-      include: [{ model: Club, include: [{ model: User }] }],
+      include: [{ model: Club, include: [{ model: User }] }, { model: VacancyApplication }],
     })
     if (!result) return res.status(404).send('No vacancies found!')
     return res.send(result)
@@ -42,8 +44,8 @@ const getMyFollowingsVacancies = async (req: any, res: any) => {
     )
 
     const vacancies: any = await Vacancy.findAll({
-      order: [['updatedAt', 'DESC']],
-      include: [{ model: Club, include: [{ model: User }] }],
+      order: [['createdAt', 'DESC']],
+      include: [{ model: Club, include: [{ model: User }] }, { model: VacancyApplication }],
       where: {
         ClubId: {
           [Op.in]: followingsIds,
