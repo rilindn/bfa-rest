@@ -2,6 +2,8 @@ import { Sequelize } from 'sequelize'
 require('dotenv').config()
 let { DB_HOST, DB_NAME, DB_USERNAME, DB_PASSWORD } = process.env
 
+console.log('first', DB_NAME!, DB_USERNAME!, DB_PASSWORD, DB_HOST)
+
 export const sequelize = new Sequelize(DB_NAME!, DB_USERNAME!, DB_PASSWORD, {
   host: DB_HOST,
   dialect: 'postgres',

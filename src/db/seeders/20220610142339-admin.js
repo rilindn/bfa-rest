@@ -1,9 +1,11 @@
 'use strict'
 // import Admin from './../../models/admin.model'
 const { v4: uuidv4 } = require('uuid')
+const { sequelizeConnection } = require('../../conf/postgres.config')
 
 module.exports = {
   async up(queryInterface, Sequelize) {
+    sequelizeConnection()
     const defaultPsw = process.env.ADMIN_PSW
 
     const users = await queryInterface.bulkInsert(
