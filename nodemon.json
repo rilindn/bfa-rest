@@ -1,6 +1,6 @@
 {
   "watch": ["src"],
   "ext": ".ts,.js",
-  "ignore": [],
-  "exec": "ts-node ./src/app.ts"
+  "ignore": ["node_modules"],
+  "exec": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules ./src/app.ts"
 }

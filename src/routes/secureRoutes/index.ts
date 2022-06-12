@@ -12,6 +12,7 @@ import likeRoutes from './like.route'
 import commentRoutes from './comment.route'
 import chatRoutes from './chat.route'
 import vacancyRoutes from './vacancy.route'
+import vacancyApplicationRoutes from './vacancyApplication.route'
 
 const router = express.Router()
 
@@ -28,5 +29,6 @@ router.use('/like', likeRoutes)
 router.use('/comment', commentRoutes)
 router.use('/chat', chatRoutes)
 router.use('/vacancy', vacancyRoutes)
+router.use('/vacancy-application', vacancyApplicationRoutes)
 
 export default router
