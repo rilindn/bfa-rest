@@ -4,6 +4,8 @@ import User from '../models/user.model'
 import Team from '../models/team/team.model'
 import Player from '../models/player.model'
 import TeamPlayer from '../models/team/teamPlayer.model'
+import { sequelize } from '../conf/postgres.config'
+import { QueryTypes } from 'sequelize'
 
 const getMyTeam = async (req: Request, res: Response) => {
   const id = req.params.id
@@ -13,6 +15,35 @@ const getMyTeam = async (req: Request, res: Response) => {
       where: { ClubId: id },
       include: [{ model: TeamPlayer, include: [{ model: Player, include: [{ model: User }] }] }],
     })
+
+    return res.send(team)
+  } catch (error) {
+    return res.status(500).send(error)
+  }
+}
+
+const getNoTeamPlayers = async (req: any, res: Response) => {
+  const query = req.query.q?.toLowerCase() || ''
+  try {
+    const team = await sequelize.query(
+      `
+        SELECT *
+        FROM "Players"
+        JOIN "Users"
+        ON "Users"."id" = "Players"."UserId"
+        WHERE ( 
+                "Players"."firstName" ILIKE '${query}%' OR
+                "Players"."lastName" ILIKE '${query}%' OR
+                "Users"."email" ILIKE '${query}%'
+              )  AND
+                "Players"."playerId" NOT IN
+                  (
+                    SELECT "PlayerId" 
+                    FROM "TeamPlayers" 
+                  )
+      `,
+      { type: QueryTypes.SELECT },
+    )
 
     return res.send(team)
   } catch (error) {
@@ -57,4 +88,4 @@ const deleteTeamPlayer = async (req: Request, res: Response) => {
   }
 }
 
-export default { getMyTeam, createTeamPlayer, deleteTeamPlayer }
+export default { getMyTeam, getNoTeamPlayers, createTeamPlayer, deleteTeamPlayer }
