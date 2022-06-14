@@ -1,11 +1,11 @@
-import { registerSchema, updateSchema } from '../validators/vacancy.validation'
+import { registerSchema, updateSchema } from '../../validators/vacancy.validation'
 import { Request, Response } from 'express'
-import Vacancy from '../models/vacancy.model'
+import Vacancy from '../../models/vacancy/vacancy.model'
 import Sequelize from 'sequelize'
-import Follow from '../models/follow.model'
-import Club from '../models/club.model'
-import User from '../models/user.model'
-import VacancyApplication from './../models/vacancyApplication.model'
+import Follow from '../../models/follow.model'
+import Club from '../../models/club.model'
+import User from '../../models/user.model'
+import VacancyApplication from '../../models/vacancy/vacancyApplication.model'
 
 const Op = Sequelize.Op
 

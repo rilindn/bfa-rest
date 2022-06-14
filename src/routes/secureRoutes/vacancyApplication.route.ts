@@ -1,5 +1,5 @@
 import express from 'express'
-import VacancyApplicationController from '../../controllers/vacancyApplication.controller'
+import VacancyApplicationController from '../../controllers/vacancy/vacancyApplication.controller'
 
 const router = express.Router()
 
