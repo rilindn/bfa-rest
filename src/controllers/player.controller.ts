@@ -6,7 +6,7 @@ import trimObjectValues from '../helpers/trimObjectValues'
 
 const getAllPlayers = async (req: Request, res: Response) => {
   try {
-    const result = await User.findAll({ include: Player })
+    const result = await User.findAll({ where: { role: 'Player' }, include: Player })
     return res.send(result)
   } catch (error) {
     return res.status(500).send(error)

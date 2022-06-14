@@ -6,7 +6,7 @@ import trimObjectValues from '../helpers/trimObjectValues'
 
 const getAllAdmins = async (req: Request, res: Response) => {
   try {
-    const result = await Admin.findAll()
+    const result = await User.findAll({ where: { role: 'Admin' }, include: Admin })
     return res.send(result)
   } catch (error) {
     return res.status(500).send(error)
