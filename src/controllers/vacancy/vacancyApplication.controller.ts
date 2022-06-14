@@ -1,9 +1,9 @@
-import { registerSchema, updateSchema } from '../validators/vacancyApplication.validation'
+import { registerSchema, updateSchema } from '../../validators/vacancyApplication.validation'
 import { Request, Response } from 'express'
 import Sequelize from 'sequelize'
-import User from '../models/user.model'
-import Player from '../models/player.model'
-import VacancyApplication from '../models/vacancyApplication.model'
+import User from '../../models/user.model'
+import Player from '../../models/player.model'
+import VacancyApplication from '../../models/vacancy/vacancyApplication.model'
 
 const getApplicatonByVacancyId = async (req: Request, res: Response) => {
   const id = req.params.id

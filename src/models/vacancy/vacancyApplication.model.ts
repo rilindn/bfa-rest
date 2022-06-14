@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize'
-import { sequelize } from '../conf/postgres.config'
-import Club from './club.model'
-import User from './user.model'
+import { sequelize } from '../../conf/postgres.config'
+import Club from '../club.model'
+import User from '../user.model'
 import Vacancy from './vacancy.model'
 
 const VacancyApplication = sequelize.define(
