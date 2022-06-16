@@ -29,7 +29,7 @@ const Post = sequelize.define(
   },
 )
 
-User.hasMany(Post)
+User.hasMany(Post, { onDelete: 'CASCADE' })
 Post.belongsTo(User, { onDelete: 'CASCADE' })
 
 export default Post

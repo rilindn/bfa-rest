@@ -23,9 +23,9 @@ const Like = sequelize.define(
   },
 )
 
-Post.hasMany(Like)
+Post.hasMany(Like, { onDelete: 'CASCADE' })
 Like.belongsTo(Post, { onDelete: 'CASCADE' })
-User.hasMany(Like)
+User.hasMany(Like, { onDelete: 'CASCADE' })
 Like.belongsTo(User, { onDelete: 'CASCADE' })
 
 export default Like
