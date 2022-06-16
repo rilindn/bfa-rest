@@ -6,6 +6,7 @@ import _ from 'lodash'
 import trimObjectValues from '../helpers/trimObjectValues'
 import Player from '../models/player.model'
 import Club from '../models/club.model'
+import Admin from '../models/admin.model'
 
 dotenv.config()
 const jwt = jsonwebtoken
@@ -37,7 +38,7 @@ const login = async (req: any, res: any, next: any) => {
 
 const loggedUser = async (req: any, res: any) => {
   try {
-    const user = await User.findByPk(req.user.userID, { include: [{ model: Player }, { model: Club }] })
+    const user = await User.findByPk(req.user.userID, { include: [{ model: Player }, { model: Club }, { model: Admin }] })
     res.send({ user })
   } catch (error) {
     res.status(500).send(error)
