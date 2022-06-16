@@ -5,6 +5,8 @@ const router = express.Router()
 
 router.get('/', PlayerController.getAllPlayers)
 
+router.get('/filter', PlayerController.getFilteredPlayers)
+
 router.get('/:id', PlayerController.getPlayerById)
 
 router.put('/:id', PlayerController.updatePlayer)

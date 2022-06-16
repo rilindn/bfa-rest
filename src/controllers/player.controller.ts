@@ -3,6 +3,9 @@ import { playerRegisterSchema, playerUpdateSchema } from '../validators/player.v
 import { Request, Response } from 'express'
 import User from './../models/user.model'
 import trimObjectValues from '../helpers/trimObjectValues'
+import Sequelize from 'sequelize'
+
+const Op = Sequelize.Op
 
 const getAllPlayers = async (req: Request, res: Response) => {
   try {
@@ -23,6 +26,47 @@ const getPlayerById = async (req: Request, res: Response) => {
     return res.send(result)
   } catch (error) {
     return res.status(500).send(error)
+  }
+}
+
+const getFilteredPlayers = async (req: any, res: any) => {
+  try {
+    const {
+      name = '',
+      position = '',
+      gender = '',
+      city = '',
+      minWeight = 0,
+      maxWeight = 300,
+      minHeight = 0,
+      maxHeight = 200,
+      foot = '',
+      nationality = '',
+      exclude = '',
+    } = req.query
+
+    const excludeIds = exclude ? exclude.split(',') : []
+    const items: any = await Player.findAll({
+      where: {
+        [Op.or]: [
+          { firstName: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('Player.firstName')), 'LIKE', '%' + name.toLowerCase() + '%') },
+          { lastName: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('Player.lastName')), 'LIKE', '%' + name.toLowerCase() + '%') },
+          { weight: { [Op.between]: [minWeight, maxWeight] } },
+          { height: { [Op.between]: [minHeight, maxHeight] } },
+          { nationality },
+          { position },
+          { gender },
+          { city },
+          { foot },
+        ],
+        [Op.and]: [{ id: { [Op.notIn]: excludeIds } }],
+      },
+      include: [{ model: User }],
+    })
+
+    return res.status(200).send(items)
+  } catch (error) {
+    console.log(error)
   }
 }
 
@@ -88,4 +132,4 @@ const deletePlayer = async (req: Request, res: Response) => {
   }
 }
 
-export default { getAllPlayers, getPlayerById, registerPlayer, updatePlayer, deletePlayer }
+export default { getAllPlayers, getFilteredPlayers, getPlayerById, registerPlayer, updatePlayer, deletePlayer }
