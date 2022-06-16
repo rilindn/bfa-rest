@@ -26,9 +26,9 @@ const Comment = sequelize.define(
   },
 )
 
-Post.hasMany(Comment)
+Post.hasMany(Comment, { onDelete: 'CASCADE' })
 Comment.belongsTo(Post, { onDelete: 'CASCADE' })
-User.hasMany(Comment)
+User.hasMany(Comment, { onDelete: 'CASCADE' })
 Comment.belongsTo(User, { onDelete: 'CASCADE' })
 
 export default Comment
