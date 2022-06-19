@@ -1,8 +1,8 @@
 import { sequelize } from '../conf/postgres.config'
 import { DataTypes } from 'sequelize'
 import Player from './player.model'
-import Club from './club.model'
 import Post from './post.model'
+import User from './user.model'
 
 const Bookmark = sequelize.define(
   'Bookmark',
@@ -13,32 +13,28 @@ const Bookmark = sequelize.define(
       primaryKey: true,
       allowNull: false,
     },
-    referenceId: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     referenceType: {
       type: DataTypes.STRING,
     },
   },
   {
-    tableName: 'Bookmark',
+    tableName: 'Bookmarks',
     indexes: [
       {
         unique: true,
-        fields: ['id', 'PlayerId', 'ClubId', 'PostId'],
+        fields: ['id', 'bookmarkerId'],
       },
     ],
   },
 )
 
-Player.hasMany(Bookmark, {foreignKey: 'PlayerId'})
-Bookmark.belongsTo(Player, { onDelete: 'CASCADE', foreignKey: 'PlayerId'})
+User.hasMany(Bookmark, { onDelete: 'CASCADE', foreignKey: 'bookmarkerId' })
+Bookmark.belongsTo(User, { onDelete: 'CASCADE', foreignKey: 'bookmarkerId' })
 
-Club.hasMany(Bookmark, {foreignKey: 'ClubId'})
-Bookmark.belongsTo(Club, { onDelete: 'CASCADE', foreignKey: 'ClubId'})
+Player.hasMany(Bookmark, { onDelete: 'CASCADE', foreignKey: 'referencedPlayer' })
+Bookmark.belongsTo(Player, { onDelete: 'CASCADE', foreignKey: 'referencedPlayer' })
 
-Post.hasMany(Bookmark, {foreignKey: 'PostId'})
-Bookmark.belongsTo(Post, { onDelete: 'CASCADE', foreignKey: 'PostId'})
+Post.hasMany(Bookmark, { onDelete: 'CASCADE', foreignKey: 'referencedPost' })
+Bookmark.belongsTo(Post, { onDelete: 'CASCADE', foreignKey: 'referencedPost' })
 
 export default Bookmark

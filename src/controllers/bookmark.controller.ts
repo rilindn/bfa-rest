@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
-import Club from '../models/club.model'
 import User from '../models/user.model'
 import Bookmark from '../models/bookmark.model'
 import { registerSchema } from '../validators/bookmark.validation'
 import Player from '../models/player.model'
+import Post from '../models/post.model'
 
 const getMyBookmarks = async (req: Request, res: Response) => {
   const id = req.params.id
@@ -12,8 +12,8 @@ const getMyBookmarks = async (req: Request, res: Response) => {
 
     const result = await Bookmark.findAll({
       order: [['createdAt', 'DESC']],
-      where: { ClubId: id },
-      include: [{ model: Club, include: [{ model: User }] }],
+      where: { bookmarkerId: id },
+      include: [{ model: Player, include: [{ model: User }] }, { model: Post }],
     })
     if (!result) return res.status(404).send('No bookmarks found!')
     return res.send(result)

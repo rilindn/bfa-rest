@@ -3,7 +3,7 @@ import BookmarkController from '../../controllers/bookmark.controller'
 
 const router = express.Router()
 
-router.get('/club/:id', BookmarkController.getMyBookmarks)
+router.get('/:id', BookmarkController.getMyBookmarks)
 
 router.post('/', BookmarkController.createBookmark)
 
