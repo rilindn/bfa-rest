@@ -4,6 +4,7 @@ import { Request, Response } from 'express'
 import User from './../models/user.model'
 import trimObjectValues from '../helpers/trimObjectValues'
 import Sequelize from 'sequelize'
+import getBirthdateByAge from '../helpers/calcBirthdateByAge'
 
 const Op = Sequelize.Op
 
@@ -32,34 +33,38 @@ const getPlayerById = async (req: Request, res: Response) => {
 const getFilteredPlayers = async (req: any, res: any) => {
   try {
     const {
-      name = '',
       position = '',
       gender = '',
       city = '',
       minWeight = 0,
-      maxWeight = 300,
+      maxWeight = minWeight ? 150 : 0,
       minHeight = 0,
-      maxHeight = 200,
+      maxHeight = minHeight ? 250 : 0,
+      minAge = 0,
+      maxAge = minAge ? 45 : 0,
       foot = '',
       nationality = '',
       exclude = '',
     } = req.query
 
+    const minBirthDate = getBirthdateByAge(minAge)
+    const maxBirthDate = getBirthdateByAge(maxAge)
     const excludeIds = exclude ? exclude.split(',') : []
+
     const items: any = await Player.findAll({
       where: {
         [Op.or]: [
-          { firstName: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('Player.firstName')), 'LIKE', '%' + name.toLowerCase() + '%') },
-          { lastName: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('Player.lastName')), 'LIKE', '%' + name.toLowerCase() + '%') },
-          { weight: { [Op.between]: [minWeight, maxWeight] } },
-          { height: { [Op.between]: [minHeight, maxHeight] } },
           { nationality },
           { position },
+          { secondPosition: position },
           { gender },
           { city },
           { foot },
+          { weight: { [Op.between]: [minWeight, maxWeight] } },
+          { height: { [Op.between]: [minHeight, maxHeight] } },
+          { '$User.birthDate$': { [Op.between]: [maxBirthDate, minBirthDate] } },
         ],
-        [Op.and]: [{ id: { [Op.notIn]: excludeIds } }],
+        [Op.and]: [{ '$User.id$': { [Op.notIn]: excludeIds } }],
       },
       include: [{ model: User }],
     })
