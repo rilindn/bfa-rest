@@ -5,6 +5,8 @@ const router = express.Router()
 
 router.get('/', PlayerController.getAllPlayers)
 
+router.get('/paginate', PlayerController.getPaginatedPlayers)
+
 router.get('/filter', PlayerController.getFilteredPlayers)
 
 router.get('/:id', PlayerController.getPlayerById)

@@ -5,6 +5,8 @@ const router = express.Router()
 
 router.get('/', ClubController.getAllClubs)
 
+router.get('/paginate', ClubController.getPaginatedClubs)
+
 router.get('/:id', ClubController.getClubById)
 
 router.put('/:id', ClubController.updateClub)

@@ -5,6 +5,8 @@ const router = express.Router()
 
 router.get('/', AdminController.getAllAdmins)
 
+router.get('/paginate', AdminController.getPaginatedAdmins)
+
 router.get('/:id', AdminController.getAdminById)
 
 router.post('/', AdminController.registerAdmin)
