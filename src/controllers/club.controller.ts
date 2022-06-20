@@ -2,12 +2,41 @@ import Club from '../models/club.model'
 import { clubRegisterSchema, clubUpdateSchema } from '../validators/club.validation'
 import { Request, Response } from 'express'
 import User from '../models/user.model'
+import Sequelize from 'sequelize'
+import paginate from 'jw-paginate'
 import trimObjectValues from '../helpers/trimObjectValues'
+
+const Op = Sequelize.Op
 
 const getAllClubs = async (req: Request, res: Response) => {
   try {
     const result = await User.findAll({ where: { role: 'Club' }, include: Club })
     return res.send(result)
+  } catch (error) {
+    return res.status(500).send(error)
+  }
+}
+
+const getPaginatedClubs = async (req: Request, res: Response) => {
+  const { search = '', pageSize = 2, page = 1 }: any = req.query
+  try {
+    const result = await User.findAll({
+      where: {
+        [Op.or]: [
+          { '$Club.firstName$': Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('Club.firstName')), 'LIKE', '%' + search.toLowerCase() + '%') },
+          { '$Club.lastName$': Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('Club.lastName')), 'LIKE', '%' + search.toLowerCase() + '%') },
+          { '$Club.clubName$': Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('Club.clubName')), 'LIKE', '%' + search.toLowerCase() + '%') },
+          { email: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('email')), 'LIKE', '%' + search.toLowerCase() + '%') },
+        ],
+        role: 'Club',
+      },
+      include: Club,
+    })
+
+    const pager = paginate(result.length, +page, +pageSize)
+    const pageOfItems = result.slice(pager.startIndex, pager.endIndex + 1)
+
+    return res.send({ pager, pageOfItems })
   } catch (error) {
     return res.status(500).send(error)
   }
@@ -86,4 +115,4 @@ const deleteClub = async (req: Request, res: Response) => {
     return res.status(500).send(error)
   }
 }
-export default { getAllClubs, getClubById, registerClub, updateClub, deleteClub }
+export default { getAllClubs, getClubById, getPaginatedClubs, registerClub, updateClub, deleteClub }

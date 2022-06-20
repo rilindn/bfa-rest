@@ -4,6 +4,7 @@ import { Request, Response } from 'express'
 import User from './../models/user.model'
 import trimObjectValues from '../helpers/trimObjectValues'
 import Sequelize from 'sequelize'
+import paginate from 'jw-paginate'
 import getBirthdateByAge from '../helpers/calcBirthdateByAge'
 
 const Op = Sequelize.Op
@@ -12,6 +13,32 @@ const getAllPlayers = async (req: Request, res: Response) => {
   try {
     const result = await User.findAll({ where: { role: 'Player' }, include: Player })
     return res.send(result)
+  } catch (error) {
+    return res.status(500).send(error)
+  }
+}
+
+const getPaginatedPlayers = async (req: Request, res: Response) => {
+  const { search = '', pageSize = 7, page = 1 }: any = req.query
+  try {
+    const result = await User.findAll({
+      where: {
+        [Op.or]: [
+          {
+            '$Player.firstName$': Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('Player.firstName')), 'LIKE', '%' + search.toLowerCase() + '%'),
+          },
+          { '$Player.lastName$': Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('Player.lastName')), 'LIKE', '%' + search.toLowerCase() + '%') },
+          { email: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('email')), 'LIKE', '%' + search.toLowerCase() + '%') },
+        ],
+        role: 'Player',
+      },
+      include: Player,
+    })
+
+    const pager = paginate(result.length, +page, +pageSize)
+    const pageOfItems = result.slice(pager.startIndex, pager.endIndex + 1)
+
+    return res.send({ pager, pageOfItems })
   } catch (error) {
     return res.status(500).send(error)
   }
@@ -137,4 +164,4 @@ const deletePlayer = async (req: Request, res: Response) => {
   }
 }
 
-export default { getAllPlayers, getFilteredPlayers, getPlayerById, registerPlayer, updatePlayer, deletePlayer }
+export default { getAllPlayers, getPaginatedPlayers, getFilteredPlayers, getPlayerById, registerPlayer, updatePlayer, deletePlayer }
