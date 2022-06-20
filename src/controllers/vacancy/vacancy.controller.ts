@@ -9,6 +9,16 @@ import VacancyApplication from '../../models/vacancy/vacancyApplication.model'
 
 const Op = Sequelize.Op
 
+const getAllVacancies = async (req: Request, res: Response) => {
+  try {
+    console.log('getAllVacancies called')
+    const result = await Vacancy.findAll({ order: [['createdAt', 'DESC']] })
+    return res.send(result)
+  } catch (error) {
+    return res.status(500).send(error)
+  }
+}
+
 const getVacancyByClubsId = async (req: Request, res: Response) => {
   const id = req.params.id
   try {
@@ -119,4 +129,4 @@ const deleteVacancy = async (req: Request, res: Response) => {
   }
 }
 
-export default { createVacancy, getVacancyById, editVacancy, deleteVacancy, getMyFollowingsVacancies, getVacancyByClubsId }
+export default { createVacancy, getVacancyById, editVacancy, deleteVacancy, getMyFollowingsVacancies, getVacancyByClubsId, getAllVacancies }

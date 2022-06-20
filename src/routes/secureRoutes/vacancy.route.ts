@@ -3,6 +3,8 @@ import VacancyController from '../../controllers/vacancy/vacancy.controller'
 
 const router = express.Router()
 
+router.get('/', VacancyController.getAllVacancies)
+
 router.get('/club/:id', VacancyController.getVacancyByClubsId)
 
 router.get('/followings/:id', VacancyController.getMyFollowingsVacancies)
