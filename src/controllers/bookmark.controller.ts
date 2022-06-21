@@ -7,12 +7,13 @@ import Post from '../models/post.model'
 
 const getMyBookmarks = async (req: Request, res: Response) => {
   const id = req.params.id
+  const refType = req.query.referenceType
   try {
     if (!id) return
 
     const result = await Bookmark.findAll({
       order: [['createdAt', 'DESC']],
-      where: { bookmarkerId: id },
+      where: { bookmarkerId: id, referenceType: refType },
       include: [{ model: Player, include: [{ model: User }] }, { model: Post }],
     })
     if (!result) return res.status(404).send('No bookmarks found!')
