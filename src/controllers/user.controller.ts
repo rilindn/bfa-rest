@@ -48,7 +48,7 @@ const getFilteredUsers = async (req: any, res: any) => {
           { '$Club.clubName$': Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('Club.clubName')), 'LIKE', '%' + search + '%') },
           { email: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('email')), 'LIKE', '%' + search + '%') },
         ],
-        [Op.and]: [{ id: { [Op.notIn]: excludeIds } }],
+        [Op.and]: [{ id: { [Op.notIn]: excludeIds } }, { role: { [Op.notIn]: ['Admin'] } }],
       },
       include: [{ model: Player }, { model: Club }],
     })
