@@ -7,7 +7,7 @@ import Post from '../models/post.model'
 
 const getMyBookmarks = async (req: Request, res: Response) => {
   const id = req.params.id
-  const refType = req.query.referenceType
+  const refType = req.query.referenceType || 'Post'
   try {
     if (!id) return
 
@@ -17,6 +17,25 @@ const getMyBookmarks = async (req: Request, res: Response) => {
       include: [{ model: Player, include: [{ model: User }] }, { model: Post }],
     })
     if (!result) return res.status(404).send('No bookmarks found!')
+    return res.send(result)
+  } catch (error) {
+    return res.status(500).send(error)
+  }
+}
+
+const isBookmarked = async (req: Request, res: Response) => {
+  const { userId, refId, refType = 'Post' } = req.query
+  try {
+    if (!userId) return
+
+    const result = await Bookmark.findOne({
+      where: {
+        bookmarkerId: userId,
+        referenceType: refType,
+        ...(refType === 'Post' ? { referencedPost: refId } : { referencedPlayer: refId }),
+      },
+    })
+    if (!result) return res.send(false)
     return res.send(result)
   } catch (error) {
     return res.status(500).send(error)
@@ -51,4 +70,4 @@ const removeBookmark = async (req: Request, res: Response) => {
   }
 }
 
-export default { getMyBookmarks, createBookmark, removeBookmark }
+export default { getMyBookmarks, isBookmarked, createBookmark, removeBookmark }
