@@ -15,6 +15,7 @@ import vacancyRoutes from './vacancy.route'
 import vacancyApplicationRoutes from './vacancyApplication.route'
 import teamRoutes from './team.route'
 import bookmarkRoutes from './bookmark.route'
+import postReporterRoutes from './postReport.route'
 
 const router = express.Router()
 
@@ -34,5 +35,6 @@ router.use('/vacancy', vacancyRoutes)
 router.use('/vacancy-application', vacancyApplicationRoutes)
 router.use('/team', teamRoutes)
 router.use('/bookmark', bookmarkRoutes)
+router.use('/postreport', postReporterRoutes)
 
 export default router
