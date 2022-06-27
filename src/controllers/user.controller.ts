@@ -15,7 +15,9 @@ const Op = Sequelize.Op
 
 const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const result = await User.findAll()
+    const result = await User.findAll({
+      include: [{ model: Player }, { model: Club }],
+    })
     return res.send(result)
   } catch (error) {
     return res.status(500).send(error)

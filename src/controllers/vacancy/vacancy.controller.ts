@@ -10,9 +10,14 @@ import VacancyApplication from '../../models/vacancy/vacancyApplication.model'
 const Op = Sequelize.Op
 
 const getAllVacancies = async (req: Request, res: Response) => {
+  const id = req.query.id
+
   try {
-    console.log('getAllVacancies called')
-    const result = await Vacancy.findAll({ order: [['createdAt', 'DESC']] })
+    const result = await Vacancy.findAll({
+      order: [['createdAt', 'DESC']],
+      include: [{ model: Club, include: [{ model: User }] }, { model: VacancyApplication }],
+      where: { ...(id && { ClubId: id }) },
+    })
     return res.send(result)
   } catch (error) {
     return res.status(500).send(error)

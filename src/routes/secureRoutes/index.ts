@@ -35,6 +35,6 @@ router.use('/vacancy', vacancyRoutes)
 router.use('/vacancy-application', vacancyApplicationRoutes)
 router.use('/team', teamRoutes)
 router.use('/bookmark', bookmarkRoutes)
-router.use('/postreport', postReporterRoutes)
+router.use('/post-report', postReporterRoutes)
 
 export default router

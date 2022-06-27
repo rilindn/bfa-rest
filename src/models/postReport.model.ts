@@ -1,8 +1,6 @@
 import { sequelize } from '../conf/postgres.config'
 import { DataTypes } from 'sequelize'
 import User from './user.model'
-import Club from './club.model'
-import Player from './player.model'
 import Post from './post.model'
 
 const PostReport = sequelize.define(
@@ -23,22 +21,16 @@ const PostReport = sequelize.define(
     indexes: [
       {
         unique: true,
-        fields: ['id', 'postReporterId'],
+        fields: ['id', 'reporterId', 'postId'],
       },
     ],
   },
 )
 
-User.hasMany(PostReport, { onDelete: 'CASCADE', foreignKey: 'postReporterId' })
-PostReport.belongsTo(User, { onDelete: 'CASCADE', foreignKey: 'postReporterId' })
-
-Club.hasMany(PostReport, { onDelete: 'CASCADE', foreignKey: 'reporterId' })
-PostReport.belongsTo(Club, { onDelete: 'CASCADE', foreignKey: 'reporterId' })
-
-Player.hasMany(PostReport, { onDelete: 'CASCADE', foreignKey: 'reporterId' })
-PostReport.belongsTo(Club, { onDelete: 'CASCADE', foreignKey: 'reporterId' })
+User.hasMany(PostReport, { onDelete: 'CASCADE', foreignKey: 'reporterId' })
+PostReport.belongsTo(User, { onDelete: 'CASCADE', foreignKey: 'reporterId' })
 
 Post.hasMany(PostReport, { onDelete: 'CASCADE', foreignKey: 'postId' })
-PostReport.belongsTo(Club, { onDelete: 'CASCADE', foreignKey: 'postId' })
+PostReport.belongsTo(Post, { onDelete: 'CASCADE', foreignKey: 'postId' })
 
 export default PostReport

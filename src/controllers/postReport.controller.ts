@@ -7,29 +7,22 @@ import User from '../models/user.model'
 import { registerSchema } from '../validators/postReport.validation'
 
 const getAllReports = async (req: Request, res: Response) => {
+  const id = req.query.id
+
   try {
-    const result = await PostReport.findAll({ order: [['updatedAt', 'DESC']] })
+    const result = await PostReport.findAll({
+      order: [['updatedAt', 'DESC']],
+      include: [
+        { model: User, include: [{ model: Player }, { model: Club }] },
+        { model: Post, include: [{ model: User, include: [{ model: Player }, { model: Club }] }] },
+      ],
+      where: { ...(id && { '$Post.UserId$': id }) },
+    })
     return res.send(result)
   } catch (error) {
     return res.status(500).send(error)
   }
 }
-
-// const getPostReports = async (req: Request, res: Response) => {
-//   const id = req.params.id
-//   try {
-//     if (!id) return
-
-//     const result = await PostReport.findAll({
-//       order: [['createdAt', 'DESC']],
-//       where: { postId: id },
-//     })
-//     if (!result) return res.status(404).send('No post reports found!')
-//     return res.send(result)
-//   } catch (error) {
-//     return res.status(500).send(error)
-//   }
-// }
 
 const createReport = async (req: Request, res: Response) => {
   const validationResult = registerSchema.validate({ ...req.body })
