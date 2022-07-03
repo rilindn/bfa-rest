@@ -1,5 +1,5 @@
 import User from '../models/user.model'
-import { registerSchema, updateSchema } from '../validators/user.validation'
+import { registerSchema, updateSchema, passwordChangeSchema } from '../validators/user.validation'
 import { Request, Response } from 'express'
 import sendEmail from '../utils/email/sendEmail'
 import crypto from 'crypto'
@@ -148,9 +148,39 @@ const resetPassword = async (req: Request, res: Response) => {
   }
 }
 
+const changePassword = async (req: Request, res: Response) => {
+  const userId = req.params.userId
+  const { oldPassword, newPassword } = trimObjectValues(req.body)
+
+  const user: any = await User.findByPk(userId, {
+    raw: true,
+    attributes: {
+      include: ['password'],
+    },
+  })
+  if (!user) return res.status(404).send('User not found')
+
+  const validationResult = passwordChangeSchema.validate({ userId, oldPassword, newPassword })
+  if (validationResult.error) {
+    const errorMsg = validationResult.error.details
+    return res.status(400).json({ error: errorMsg })
+  }
+
+  try {
+    const passwordMatches = await bcrypt.compare(oldPassword, user.password)
+    if (!passwordMatches) return res.status(400).send('Incorrect password!')
+
+    const updatedUser = await User.update({ password: newPassword }, { where: { id: userId }, individualHooks: true })
+    return res.send(updatedUser)
+  } catch (error) {
+    res.status(500).send(error)
+  }
+}
+
 const updateUser = async (req: Request, res: Response) => {
   const userId = req.params.id
   const validationResult = updateSchema.validate({ ...req.body, userId })
+  const { firstName, lastName, roleData: roleData = { firstName, lastName }, ...payload } = req.body
 
   if (validationResult.error) {
     const errorMsg = validationResult.error.details
@@ -158,9 +188,19 @@ const updateUser = async (req: Request, res: Response) => {
   }
 
   try {
-    const updatedUser = await User.update({ ...req.body }, { where: { id: userId }, individualHooks: true })
+    const [, updatedUser]: any = await Promise.all([
+      User.update({ ...payload }, { where: { id: userId }, individualHooks: true }),
+      User.findByPk(userId, { raw: true }),
+    ])
     if (!updatedUser) return res.status(404).send('User not found!')
-    const result = await User.findByPk(userId)
+    if (roleData && updatedUser.role) {
+      if (updatedUser.role === 'Player') {
+        await Player.update({ ...roleData }, { where: { UserId: userId } })
+      } else {
+        await Club.update({ ...roleData }, { where: { UserId: userId } })
+      }
+    }
+    const result = await User.findByPk(userId, { include: [{ model: Player }, { model: Club }] })
     return res.send(result)
   } catch (error) {
     res.status(500).send(error)
@@ -191,4 +231,5 @@ export default {
   requestResetPassword,
   validateResetPasswordCode,
   resetPassword,
+  changePassword,
 }
