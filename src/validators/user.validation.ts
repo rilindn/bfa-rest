@@ -17,4 +17,12 @@ export const updateSchema = Joi.object({
   role: Joi.string().valid('Player', 'Club', 'Admin').label('Role'),
   status: Joi.string().label('Status').valid('Active', 'Inactive'),
   profilePic: Joi.string().min(2).label('Profile picture'),
+  firstName: Joi.string().min(2).max(30).label('Firstname'),
+  lastName: Joi.string().min(2).max(30).label('Lastname'),
+})
+
+export const passwordChangeSchema = Joi.object({
+  userId: Joi.string().required().label('ID'),
+  oldPassword: Joi.string().required().min(7).max(30).label('Old Password'),
+  newPassword: Joi.string().required().min(7).max(30).label('New Password'),
 })
