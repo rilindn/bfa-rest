@@ -16,8 +16,15 @@ const Ad = sequelize.define(
     description: {
       type: DataTypes.STRING,
     },
+    url: {
+      type: DataTypes.STRING,
+    },
     image: {
       type: DataTypes.STRING,
+    },
+    order: {
+      type: DataTypes.INTEGER,
+      defaultValue: 3,
     },
     active: {
       type: DataTypes.BOOLEAN,
