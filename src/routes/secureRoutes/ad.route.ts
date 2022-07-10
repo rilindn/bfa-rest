@@ -11,6 +11,10 @@ router.post('/', AdController.createAd)
 
 router.put('/:id', AdController.updateAd)
 
+router.put('/inc-clicks/:id', AdController.incrementClicks)
+
+router.put('/inc-views/:id', AdController.incrementViews)
+
 router.delete('/:id', AdController.deleteAd)
 
 export default router
