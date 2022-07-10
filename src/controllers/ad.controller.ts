@@ -16,7 +16,7 @@ const getAllAds = async (req: Request, res: Response) => {
 
 const getAllActiveAds = async (req: Request, res: Response) => {
   try {
-    const result = await Ad.findAll({ where: { active: true } })
+    const result = await Ad.findAll({ where: { active: true }, order: [['order', 'ASC']] })
     if (!result) return res.status(404).send('Ad not found')
     return res.send(result)
   } catch (error) {
@@ -40,6 +40,32 @@ const createAd = async (req: Request, res: Response) => {
   }
 }
 
+const incrementClicks = async (req: Request, res: Response) => {
+  const adId = req.params.id
+
+  try {
+    const ad: any = await Ad.findByPk(adId)
+    if (!ad) return res.status(404).send('Ad not found!')
+    const result = await ad.increment('clicks', { by: 1 })
+    return res.send(result)
+  } catch (error) {
+    res.status(500).send(error)
+  }
+}
+
+const incrementViews = async (req: Request, res: Response) => {
+  const adId = req.params.id
+
+  try {
+    const ad: any = await Ad.findByPk(adId)
+    if (!ad) return res.status(404).send('Ad not found!')
+    const result = await ad.increment('views', { by: 1 })
+    return res.send(result)
+  } catch (error) {
+    res.status(500).send(error)
+  }
+}
+
 const updateAd = async (req: Request, res: Response) => {
   const adId = req.params.id
   const validationResult = updateSchema.validate({ ...req.body, adId })
@@ -50,8 +76,8 @@ const updateAd = async (req: Request, res: Response) => {
   }
 
   try {
-    const updatedPost: any = await Ad.update({ ...req.body }, { where: { id: adId } })
-    if (!updatedPost) return res.status(404).send('Ad not found!')
+    const updatedAd: any = await Ad.update({ ...req.body }, { where: { id: adId } })
+    if (!updatedAd) return res.status(404).send('Ad not found!')
     const result = await Ad.findByPk(adId)
     return res.send(result)
   } catch (error) {
@@ -71,4 +97,4 @@ const deleteAd = async (req: Request, res: Response) => {
   }
 }
 
-export default { getAllAds, getAllActiveAds, createAd, updateAd, deleteAd }
+export default { getAllAds, getAllActiveAds, createAd, updateAd, incrementClicks, incrementViews, deleteAd }
